@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.youth_rd.demo.dao.ClassMapper" >
+    <resultMap id="BaseResultMap" type="com.youth_rd.demo.domain.Class" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="plate_id" property="plateId" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="isDelete" property="isDelete" jdbcType="INTEGER" />
+    </resultMap>
+    <select id="selectNotDeleteByPlateId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select *
+        from class
+        where plate_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO class (plate_id,name) VALUES (#{plateId,jdbcType=INTEGER},#{name,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateIsDeleteById" >
+        UPDATE class SET isDelete = #{value,jdbcType=INTEGER}
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

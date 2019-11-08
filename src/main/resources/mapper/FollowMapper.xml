@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.youth_rd.demo.dao.FollowMapper" >
+    <resultMap id="BaseResultMap" type="com.youth_rd.demo.domain.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="pwd" property="password" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="INTEGER" />
+        <result column="image" property="image" jdbcType="VARCHAR" />
+        <result column="isban" property="isBan" jdbcType="INTEGER" />
+    </resultMap>
+    <select id="selectFollowsById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        *
+        FROM user u
+        LEFT JOIN follow f on u.id = f.focused_id
+        WHERE f.focus_id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectFansById" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM user u
+        LEFT JOIN follow f on u.id = f.focus_id
+        WHERE f.focus_id = #{id,jdbcType=INTEGER}
+    </select>
+    <insert id="insert">
+        INSERT INTO follow (focus_id,focused_id)
+        VALUES (#{followId,jdbcType=INTEGER},#{followedId,jdbcType=INTEGER})
+    </insert>
+    <delete id="delete">
+        DELETE FROM follow
+        WHERE focus_id = #{followId,jdbcType=INTEGER} AND focused_id = #{followedId,jdbcType=INTEGER}
+    </delete>
+</mapper>

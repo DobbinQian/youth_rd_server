@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.youth_rd.demo.dao.StyleMapper" >
+    <resultMap id="BaseResultMap" type="com.youth_rd.demo.domain.Style" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="plate_id" property="plateId" jdbcType="INTEGER" />
+        <association property="news" javaType="com.youth_rd.demo.domain.Plate" column="plate_id">
+            <id property="id" column="id"></id>
+            <result property="name" column="name"></result>
+        </association>
+    </resultMap>
+    <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" resultType="com.youth_rd.demo.domain.Style">
+        SELECT
+        *
+        FROM style s
+        LEFT JOIN plate n on s.plate_id = n.id
+        WHERE s.user_id = #{id,jdbcType=INTEGER}
+    </select>
+</mapper>

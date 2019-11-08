@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.youth_rd.demo.dao.NewsMapper" >
+    <resultMap id="BaseResultMap" type="com.youth_rd.demo.domain.News" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="class_id" property="classId" jdbcType="INTEGER" />
+        <result column="author_id" property="authorId" jdbcType="INTEGER" />
+        <result column="audit_id" property="auditId" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="image" property="image" jdbcType="VARCHAR" />
+        <result column="topImg" property="topImg" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="time" property="time" jdbcType="TIMESTAMP" />
+        <result column="isDelete" property="isDelete" jdbcType="INTEGER" />
+        <result column="tag" property="tag" jdbcType="INTEGER" />
+        <result column="auditContent" property="auditContent" jdbcType="VARCHAR" />
+    </resultMap>
+    <insert id="insert" parameterType="com.youth_rd.demo.domain.News">
+        INSERT JOIN news
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="classId != null" >
+                class_id,
+            </if>
+            <if test="title != null" >
+                title,
+            </if>
+            <if test="image != null" >
+                image,
+            </if>
+            <if test="topImg != null" >
+                topImg,
+            </if>
+            <if test="content != null" >
+                content,
+            </if>
+            <if test="time != null" >
+                time,
+            </if>
+            <if test="isDelete != null" >
+                isDelete,
+            </if>
+            <if test="tag != null" >
+                tag,
+            </if>
+            <if test="auditContent != null" >
+                auditContent,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="classId != null" >
+                #{classId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null" >
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null" >
+                #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="topImg != null" >
+                #{topImg,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null" >
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null" >
+                #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="tag != null" >
+                #{tag,jdbcType=INTEGER},
+            </if>
+            <if test="auditContent != null" >
+                #{auditContent,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectPassByUserId" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE author_id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAuditByUserId" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE author_id = #{id,jdbcType=INTEGER} AND tag = 0
+    </select>
+    <select id="selectReturnByUserId" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE author_id = #{id,jdbcType=INTEGER} AND tag = -1
+    </select>
+    <select id="selectByFansId" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE author_id in (SELECT focused_id FROM follow WHERE focus_id = #{id,jdbcType=INTEGER})
+    </select>
+    <select id="selectByTop" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE tag > 1
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        ORDER BY time
+    </select>
+    <select id="selectByPlateId" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE class_id in (SELECT class_id FROM plate WHERE id = #{id,jdbcType=INTEGER})
+    </select>
+    <select id="selectByClassId" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE class_id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAllAuditList" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE tag = 0
+    </select>
+
+    <select id="selectByIdTitle" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE <if test="id!=null">id = #{id,jdbcType=INTEGER}</if><if test="title!=null"> OR LIKE title = '%${title,jdbcType=VARCHAR}%'</if>
+    </select>
+
+    <update id="updateTagById">
+        UPDATE news SET tag = #{tag,jdbcType=INTEGER},content = #{content,jdbcType=VARCHAR}
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectTopSum">
+        SELECT COUNT(id) FROM news
+        WHERE tag > 1
+    </select>
+
+    <select id="selectTopLine" resultMap="BaseResultMap">
+        SELECT *
+        FROM news
+        WHERE tag > 1
+    </select>
+    <update id="updateTopLine">
+        UPDATE news SET topImg = #{topImg,jdbcType=VARCHAR},tag = #{queue,jdbcType=INTEGER}
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateIsDelete">
+        UPDATE news SET idDelete = #{op,jdbcType=INTEGER}
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
