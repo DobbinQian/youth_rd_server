@@ -69,7 +69,7 @@
     <select id="selectByEmailAndPwd" resultMap="BaseResultMap" >
         select *
         from user
-        where email = #{id,jdbcType=VARCHAR} AND pwd = #{pwd,jdbcType=VARCHAR}
+        where email = #{email,jdbcType=VARCHAR} AND pwd = #{pwd,jdbcType=VARCHAR}
     </select>
 
     <select id="selectByEmail" resultMap="BaseResultMap" >
