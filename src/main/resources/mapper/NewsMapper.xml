@@ -14,6 +14,17 @@
         <result column="isDelete" property="isDelete" jdbcType="INTEGER" />
         <result column="tag" property="tag" jdbcType="INTEGER" />
         <result column="auditContent" property="auditContent" jdbcType="VARCHAR" />
+        <result column="browse" property="browse" jdbcType="INTEGER"/>
+        <result column="comments" property="comments" jdbcType="INTEGER"/>
+        <association property="author" javaType="com.youth_rd.demo.domain.User" column="author_id">
+            <id column="id" property="id" jdbcType="INTEGER" />
+            <result column="email" property="email" jdbcType="VARCHAR" />
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="sex" property="sex" jdbcType="INTEGER" />
+            <result column="image" property="image" jdbcType="VARCHAR" />
+            <result column="isBan" property="isBan" jdbcType="INTEGER" />
+            <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
+        </association>
     </resultMap>
     <insert id="insert" parameterType="com.youth_rd.demo.domain.News">
         INSERT JOIN news
@@ -107,9 +118,12 @@
         WHERE tag > 1
     </select>
     <select id="selectAll" resultMap="BaseResultMap">
-        SELECT *
-        FROM news
-        ORDER BY time
+        SELECT n.id,n.author_id,n.title,n.image,n.time,u.id,u.name,
+        (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
+        (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
+        FROM news n
+        LEFT JOIN user u ON u.id = n.author_id
+        ORDER BY n.time
     </select>
     <select id="selectByPlateId" resultMap="BaseResultMap">
         SELECT *

@@ -93,6 +93,7 @@ public class NewsServiceImpl implements NewsService {
             map.put("title",n.getTitle());
             map.put("img",n.getImage());
             map.put("date",n.getTime());
+            map.put("newsId",n.getId());
             map.put("authorId",n.getAuthorId());
             map.put("authorName",n.getAuthor().getName());
             map.put("browse",n.getBrowse());
