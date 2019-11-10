@@ -1,11 +1,15 @@
 package com.youth_rd.demo.domain;
 
-public class Class {
+import java.io.Serializable;
+
+public class Class implements Serializable {
     private Integer id;
 
     private Integer plateId;
 
     private String name;
+
+    private Integer isDelete;
 
     public Integer getId() {
         return id;
@@ -29,5 +33,13 @@ public class Class {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(Integer isDelete) {
+        this.isDelete = isDelete;
     }
 }

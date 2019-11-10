@@ -123,6 +123,7 @@
         (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
         FROM news n
         LEFT JOIN user u ON u.id = n.author_id
+        WHERE n.tag = 1
         ORDER BY n.time
     </select>
     <select id="selectByPlateId" resultMap="BaseResultMap">

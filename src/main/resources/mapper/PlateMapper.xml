@@ -5,23 +5,25 @@
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="isDelete" property="isDelete" jdbcType="INTEGER" />
-        <collection property="classes" column="plate_id" javaType="ArrayList">
-            <result property="id" column="id"/>
-            <result property="plate_id" column="plateId"/>
-            <result property="name" column="name"/>
-            <result property="isDelete" column="isDelete"/>
+        <collection property="classes" javaType="ArrayList" ofType="com.youth_rd.demo.domain.Class">
+            <result property="id" column="class_id"/>
+            <result property="plateId" column="plate_id"/>
+            <result property="name" column="class_name"/>
+            <result property="isDelete" column="class_isDelete"/>
         </collection>
     </resultMap>
     <select id="selectIsNotDelete" resultMap="BaseResultMap" >
         SELECT
-        *
-        FROM plate p,class c
+        p.id,p.name,c.id AS class_id,c.name AS class_name
+        FROM plate p
+        LEFT JOIN class c ON p.id = c.plate_id AND c.isDelete = 0
         WHERE p.isDelete = 0
     </select>
-    <select id="selectAll">
+    <select id="selectAll" resultMap="BaseResultMap">
         SELECT
         *
-        FROM plate p,class c
+        FROM plate p
+        LEFT JOIN class c ON p.id = c.plate_id
     </select>
     <insert id="insert">
         INSERT INTO plate (name,isDelete)
