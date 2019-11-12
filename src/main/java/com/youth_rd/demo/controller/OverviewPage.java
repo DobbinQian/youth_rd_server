@@ -32,6 +32,11 @@ public class OverviewPage {
     public ServerResponse getNewsByClass(@RequestParam("id") Integer id,
                                          @RequestParam("curr") Integer curr,
                                          @RequestParam("limit") Integer limit){
+        if(id==0){
+            //TODO 做缓存
+            List<Map<String,Object>> resultList = newsService.getNewsList(curr,limit);
+            return ServerResponse.createBySuccess("获取首页新闻成功",resultList);
+        }
         List<Map<String,Object>> resultList = null;
         if(id>0){
             resultList = newsService.getNewsListByClassId(id,curr,limit);

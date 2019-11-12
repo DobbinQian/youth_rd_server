@@ -88,6 +88,9 @@ public class NewsServiceImpl implements NewsService {
         }
         newsList = PageTool.getDateByCL(newsList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
+        if(newsList == null){
+            return resultList;
+        }
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
             map.put("title",n.getTitle());
@@ -98,6 +101,10 @@ public class NewsServiceImpl implements NewsService {
             map.put("authorName",n.getAuthor().getName());
             map.put("browse",n.getBrowse());
             map.put("comments",n.getComments());
+            map.put("classId",n.getaClass().getId());
+            map.put("className",n.getaClass().getName());
+            map.put("plateId",n.getPlate().getId());
+            map.put("plateName",n.getPlate().getName());
             resultList.add(map);
         }
         return resultList;
@@ -115,16 +122,23 @@ public class NewsServiceImpl implements NewsService {
         }
         newsList = PageTool.getDateByCL(newsList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
+        if(newsList == null){
+            return resultList;
+        }
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
-            map.put("id",n.getId());
             map.put("title",n.getTitle());
-            map.put("content",n.getContent().substring(0,20));
+            map.put("img",n.getImage());
+            map.put("date",n.getTime());
+            map.put("newsId",n.getId());
+            map.put("authorId",n.getAuthorId());
             map.put("authorName",n.getAuthor().getName());
             map.put("browse",n.getBrowse());
             map.put("comments",n.getComments());
-            map.put("className",n.getClass().getName());
-            map.put("date",n.getTime());
+            map.put("classId",n.getaClass().getId());
+            map.put("className",n.getaClass().getName());
+            map.put("plateId",n.getPlate().getId());
+            map.put("plateName",n.getPlate().getName());
             resultList.add(map);
         }
         return resultList;
@@ -142,16 +156,23 @@ public class NewsServiceImpl implements NewsService {
         }
         newsList = PageTool.getDateByCL(newsList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
+        if(newsList == null){
+            return resultList;
+        }
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
-            map.put("id",n.getId());
             map.put("title",n.getTitle());
-            map.put("content",n.getContent().substring(0,20));
+            map.put("img",n.getImage());
+            map.put("date",n.getTime());
+            map.put("newsId",n.getId());
+            map.put("authorId",n.getAuthorId());
             map.put("authorName",n.getAuthor().getName());
             map.put("browse",n.getBrowse());
             map.put("comments",n.getComments());
-            map.put("className",n.getClass().getName());
-            map.put("date",n.getTime());
+            map.put("classId",n.getaClass().getId());
+            map.put("className",n.getaClass().getName());
+            map.put("plateId",n.getPlate().getId());
+            map.put("plateName",n.getPlate().getName());
             resultList.add(map);
         }
         return resultList;

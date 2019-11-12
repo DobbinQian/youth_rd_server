@@ -34,6 +34,10 @@ public class News implements Serializable {
 
     private Integer comments;
 
+    private Class aClass;
+
+    private Plate plate;
+
     public Integer getId() {
         return id;
     }
@@ -152,5 +156,21 @@ public class News implements Serializable {
 
     public void setComments(Integer comments) {
         this.comments = comments;
+    }
+
+    public Class getaClass() {
+        return aClass;
+    }
+
+    public void setaClass(Class aClass) {
+        this.aClass = aClass;
+    }
+
+    public Plate getPlate() {
+        return plate;
+    }
+
+    public void setPlate(Plate plate) {
+        this.plate = plate;
     }
 }
