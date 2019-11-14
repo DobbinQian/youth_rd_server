@@ -4,11 +4,13 @@ import com.google.code.kaptcha.Producer;
 import com.youth_rd.demo.domain.User;
 import com.youth_rd.demo.service.EmailService;
 import com.youth_rd.demo.service.UserService;
+import com.youth_rd.demo.tools.JwtToken;
 import com.youth_rd.demo.tools.ServerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @RestController
@@ -22,6 +24,9 @@ public class LoginAndRegistration {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private JwtToken jwtToken;
 
     //获取登录验证码
 //    @RequestMapping("/getValidCode")
@@ -55,7 +60,7 @@ public class LoginAndRegistration {
     @ResponseBody
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public ServerResponse login(@RequestBody Map<String,String> jsonObj,
-                                HttpServletRequest request){
+                                HttpServletResponse response){
         String email = jsonObj.get("email");
         String pwd = jsonObj.get("pwd");
 
@@ -65,7 +70,9 @@ public class LoginAndRegistration {
             return ServerResponse.createByError("用户名或密码错误");
         }
 
-        request.getSession().setAttribute("user",user);
+        String token = jwtToken.generateToken(user.getId().longValue());
+
+        response.setHeader("Authorization",token);
 
         return ServerResponse.createByCheckSuccess();
     }
