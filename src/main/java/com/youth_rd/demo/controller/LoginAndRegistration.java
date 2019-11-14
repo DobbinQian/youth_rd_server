@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 public class LoginAndRegistration {
@@ -74,42 +76,49 @@ public class LoginAndRegistration {
 
         response.setHeader("Authorization",token);
 
-        return ServerResponse.createByCheckSuccess();
+        Map<String,String> mapresult = new HashMap<>();
+        mapresult.put("id",user.getId().toString());
+        mapresult.put("img",user.getImage());
+        mapresult.put("name",user.getName());
+        mapresult.put("sex",user.getSex().toString());
+        mapresult.put("email",user.getEmail());
+
+        return ServerResponse.createBySuccess("登录成功",mapresult);
     }
 
     //发送注册邮箱验证码
-    @RequestMapping(value = "/sendRegisterEmail",method = RequestMethod.POST)
-    public ServerResponse sendRegisterEmail(@RequestBody Map<String,String> jsonObj,
-                                            HttpServletRequest request){
-        String email = jsonObj.get("email");
-        User user = userService.getUserByEmail(email);
-        if(user!=null){
-            return ServerResponse.createByError("该邮箱已经注册");
-        }
-        String capText = captchaProducer.createText();
-        request.getSession().setAttribute("registerCode",capText);
-        emailService.sendSimpleMail(email,"信息青年注册验证码","你的验证码是:"+capText);
-        return ServerResponse.createByCheckSuccess();
-    }
+//    @RequestMapping(value = "/sendRegisterEmail",method = RequestMethod.POST)
+//    public ServerResponse sendRegisterEmail(@RequestBody Map<String,String> jsonObj,
+//                                            HttpServletRequest request){
+//        String email = jsonObj.get("email");
+//        User user = userService.getUserByEmail(email);
+//        if(user!=null){
+//            return ServerResponse.createByError("该邮箱已经注册");
+//        }
+//        String capText = captchaProducer.createText();
+//        request.getSession().setAttribute("registerCode",capText);
+//        emailService.sendSimpleMail(email,"信息青年注册验证码","你的验证码是:"+capText);
+//        return ServerResponse.createByCheckSuccess();
+//    }
 
     //注册
     @RequestMapping(value = "/register",method = RequestMethod.POST)
     public ServerResponse register(@RequestBody Map<String,String> jsonObj,
                                    HttpServletRequest request){
-        String validCode = jsonObj.get("validCode");
         String email = jsonObj.get("email");
         String pwd = jsonObj.get("pwd");
         String rePwd = jsonObj.get("rePwd");
 
-        String key = (String) request.getSession().getAttribute("registerCode");
-        if(!key.equals(validCode)){
-            return ServerResponse.createByError("邮箱验证码不正确");
-        }
         if(!pwd.equals(rePwd)){
             return ServerResponse.createByError("重复密码不正确");
         }
         //TODO 判断密码是否符合要求
-        request.getSession().setAttribute("registerCode",null);
+        String reg = "^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$).{6,20}$";
+        boolean isMatch = Pattern.matches(reg, pwd);
+        if (!isMatch){
+            return ServerResponse.createByError("密码包含 数字,英文,字符中的两种以上，长度6-20");
+        }
+
         int result = userService.addUserByEmailAndPwd(email,pwd);
         if(result == 0){
             return ServerResponse.createByError("数据库异常,创建账户失败");
@@ -118,34 +127,34 @@ public class LoginAndRegistration {
     }
 
     //发送修改密码邮箱验证码
-    @RequestMapping(value = "/sendUpdatePwdEmail",method = RequestMethod.POST)
-    public ServerResponse sendUpdatePwdEmail(@RequestBody Map<String,String> jsonObj,
-                                             HttpServletRequest request){
-        String email = jsonObj.get("email");
-        User user = userService.getUserByEmail(email);
-        if(user==null){
-            return ServerResponse.createByError("该邮箱未注册账号");
-        }
-        String capText = captchaProducer.createText();
-        request.getSession().setAttribute("updateCode",capText);
-        emailService.sendSimpleMail(email,"信息青年改密验证码","你的验证码是:"+capText);
-        return ServerResponse.createByCheckSuccess();
-    }
+//    @RequestMapping(value = "/sendUpdatePwdEmail",method = RequestMethod.POST)
+//    public ServerResponse sendUpdatePwdEmail(@RequestBody Map<String,String> jsonObj,
+//                                             HttpServletRequest request){
+//        String email = jsonObj.get("email");
+//        User user = userService.getUserByEmail(email);
+//        if(user==null){
+//            return ServerResponse.createByError("该邮箱未注册账号");
+//        }
+//        String capText = captchaProducer.createText();
+//        request.getSession().setAttribute("updateCode",capText);
+//        emailService.sendSimpleMail(email,"信息青年改密验证码","你的验证码是:"+capText);
+//        return ServerResponse.createByCheckSuccess();
+//    }
 
     //验证邮箱
-    @RequestMapping(value = "/provingValidCode",method = RequestMethod.POST)
-    public ServerResponse provingValidCode(@RequestBody Map<String,String> jsonObj,
-                                           HttpServletRequest request){
-        String email = jsonObj.get("email");
-        String validCode = jsonObj.get("validCode");
-        String key = (String) request.getSession().getAttribute("updateCode");
-        if(key!=validCode){
-            return ServerResponse.createByError("邮箱验证码不正确");
-        }
-        request.getSession().setAttribute("updateCode",null);
-        request.getSession().setAttribute("updateEmail",email);
-        return ServerResponse.createByCheckSuccess();
-    }
+//    @RequestMapping(value = "/provingValidCode",method = RequestMethod.POST)
+//    public ServerResponse provingValidCode(@RequestBody Map<String,String> jsonObj,
+//                                           HttpServletRequest request){
+//        String email = jsonObj.get("email");
+//        String validCode = jsonObj.get("validCode");
+//        String key = (String) request.getSession().getAttribute("updateCode");
+//        if(key!=validCode){
+//            return ServerResponse.createByError("邮箱验证码不正确");
+//        }
+//        request.getSession().setAttribute("updateCode",null);
+//        request.getSession().setAttribute("updateEmail",email);
+//        return ServerResponse.createByCheckSuccess();
+//    }
 
     //修改密码
     @RequestMapping(value = "/updatePwd",method = RequestMethod.POST)
@@ -157,12 +166,13 @@ public class LoginAndRegistration {
         if(pwd!=rePwd){
             return ServerResponse.createByError("重复密码不正确");
         }
-        String key = (String) request.getSession().getAttribute("updateEmail");
-        if(key!=email){
-            return ServerResponse.createByError("非法操作");
+
+        String reg = "^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$).{6,20}$";
+        boolean isMatch = Pattern.matches(reg, pwd);
+        if (!isMatch){
+            return ServerResponse.createByError("密码包含 数字,英文,字符中的两种以上，长度6-20");
         }
 
-        request.getSession().setAttribute("updateEmail",null);
         int result = userService.updatePwdByEmail(email,pwd);
         if(result==0){
             return ServerResponse.createByError("数据库异常，密码修改失败");
