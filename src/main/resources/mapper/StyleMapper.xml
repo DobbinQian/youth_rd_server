@@ -4,17 +4,19 @@
     <resultMap id="BaseResultMap" type="com.youth_rd.demo.domain.Style" >
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="user_id" property="userId" jdbcType="INTEGER" />
-        <result column="plate_id" property="plateId" jdbcType="INTEGER" />
-        <association property="news" javaType="com.youth_rd.demo.domain.Plate" column="plate_id">
-            <id property="id" column="id"></id>
-            <result property="name" column="name"></result>
-        </association>
+        <result column="value" property="value" jdbcType="VARCHAR" />
     </resultMap>
     <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" resultType="com.youth_rd.demo.domain.Style">
         SELECT
         *
         FROM style s
-        LEFT JOIN plate n on s.plate_id = n.id
         WHERE s.user_id = #{id,jdbcType=INTEGER}
     </select>
+    <insert id="insert">
+        INSERT INTO style (user_id,value) VALUES (#{id,jdbcType=INTEGER},#{value,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateByUserId">
+        UPDATE style SET value=#{value,jdbcType=VARCHAR}
+        WHERE user_id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

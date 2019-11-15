@@ -21,7 +21,7 @@ public class IPInterceptor implements HandlerInterceptor {
         //过滤ip,若用户在白名单内，则放行
         String ipAddress= IPUtils.getRealIP(request);
         LOG.info("USER IP ADDRESS IS =>"+ipAddress);
-        if(!ipAddress.equals("127.0.0.1"))
+        if(!ipAddress.equals("192.168.43.22"))
             return false;
         return true;
     }

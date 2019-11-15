@@ -6,6 +6,7 @@ import com.youth_rd.demo.service.EmailService;
 import com.youth_rd.demo.service.UserService;
 import com.youth_rd.demo.tools.JwtToken;
 import com.youth_rd.demo.tools.ServerResponse;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,7 +66,7 @@ public class LoginAndRegistration {
                                 HttpServletResponse response){
         String email = jsonObj.get("email");
         String pwd = jsonObj.get("pwd");
-
+        System.out.println(email+"---"+pwd);
         User user = userService.getUserByEmailAndPwd(email,pwd);
 
         if(user==null){
@@ -87,19 +88,19 @@ public class LoginAndRegistration {
     }
 
     //发送注册邮箱验证码
-//    @RequestMapping(value = "/sendRegisterEmail",method = RequestMethod.POST)
-//    public ServerResponse sendRegisterEmail(@RequestBody Map<String,String> jsonObj,
-//                                            HttpServletRequest request){
-//        String email = jsonObj.get("email");
-//        User user = userService.getUserByEmail(email);
-//        if(user!=null){
-//            return ServerResponse.createByError("该邮箱已经注册");
-//        }
-//        String capText = captchaProducer.createText();
-//        request.getSession().setAttribute("registerCode",capText);
-//        emailService.sendSimpleMail(email,"信息青年注册验证码","你的验证码是:"+capText);
-//        return ServerResponse.createByCheckSuccess();
-//    }
+    @RequestMapping(value = "/sendRegisterEmail",method = RequestMethod.POST)
+    public ServerResponse sendRegisterEmail(@RequestBody Map<String,String> jsonObj,
+                                            HttpServletRequest request){
+        String email = jsonObj.get("email");
+        User user = userService.getUserByEmail(email);
+        if(user!=null){
+            return ServerResponse.createByError("该邮箱已经注册");
+        }
+        String capText = captchaProducer.createText();
+        request.getSession().setAttribute("registerCode",capText);
+        emailService.sendSimpleMail(email,"信息青年注册验证码","你的验证码是:"+capText);
+        return ServerResponse.createByCheckSuccess();
+    }
 
     //注册
     @RequestMapping(value = "/register",method = RequestMethod.POST)
@@ -109,14 +110,13 @@ public class LoginAndRegistration {
         String pwd = jsonObj.get("pwd");
         String rePwd = jsonObj.get("rePwd");
 
+        User user = userService.getUserByEmail(email);
+        if(user!=null){
+            return ServerResponse.createByError("该邮箱已经注册");
+        }
+
         if(!pwd.equals(rePwd)){
             return ServerResponse.createByError("重复密码不正确");
-        }
-        //TODO 判断密码是否符合要求
-        String reg = "^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)])+$).{6,20}$";
-        boolean isMatch = Pattern.matches(reg, pwd);
-        if (!isMatch){
-            return ServerResponse.createByError("密码包含 数字,英文,字符中的两种以上，长度6-20");
         }
 
         int result = userService.addUserByEmailAndPwd(email,pwd);
@@ -177,6 +177,15 @@ public class LoginAndRegistration {
         if(result==0){
             return ServerResponse.createByError("数据库异常，密码修改失败");
         }
+        return ServerResponse.createByCheckSuccess();
+    }
+
+    //注销
+    @RequestMapping(value = "/user/logOff",method = RequestMethod.POST)
+    public ServerResponse logOff(@RequestHeader("Authorization") String authHeader){
+        Claims claims = jwtToken.getClaimByToken(authHeader);
+        String userId = claims.getSubject();
+
         return ServerResponse.createByCheckSuccess();
     }
 }

@@ -5,13 +5,13 @@ import java.util.Map;
 
 public interface PlateAndClassService {
     //获取用户自定义的板块信息
-    List<Map<String,Object>> getPlateByUserId(Integer id);
+    String getPlateByUserId(Integer id);
 
     //获取默认板块信息
     List<Map<String,Object>> getPlate();
 
     //编辑自定义板块
-    int editUserPlate(List<Map<String,Integer>> objs,Integer id);
+    int editUserPlate(String value,Integer id);
 
     //用户获取所有板块和分类信息
     List<Map<String,Object>> getAllPlateAndClass();

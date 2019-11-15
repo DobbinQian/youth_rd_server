@@ -7,11 +7,7 @@ public class Style implements Serializable {
 
     private Integer userId;
 
-    private Integer plateId;
-
-    private Integer queue;
-
-    private Plate plate;
+    private String value;
 
     public Integer getId() {
         return id;
@@ -29,27 +25,11 @@ public class Style implements Serializable {
         this.userId = userId;
     }
 
-    public Integer getPlateId() {
-        return plateId;
+    public String getValue() {
+        return value;
     }
 
-    public void setPlateId(Integer plateId) {
-        this.plateId = plateId;
-    }
-
-    public Integer getQueue() {
-        return queue;
-    }
-
-    public void setQueue(Integer queue) {
-        this.queue = queue;
-    }
-
-    public Plate getPlate() {
-        return plate;
-    }
-
-    public void setPlate(Plate plate) {
-        this.plate = plate;
+    public void setValue(String value) {
+        this.value = value;
     }
 }

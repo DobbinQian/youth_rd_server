@@ -94,11 +94,4 @@ public class UserCenter {
         }
         return ServerResponse.createByCheckSuccess();
     }
-
-    //注销
-    @RequestMapping(value = "/user/logOff",method = RequestMethod.POST)
-    public ServerResponse logOff(HttpServletRequest request){
-        request.setAttribute("user",null);
-        return ServerResponse.createByCheckSuccess();
-    }
 }

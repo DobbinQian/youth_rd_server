@@ -1,15 +1,10 @@
 package com.youth_rd.demo.controller;
 
-import com.youth_rd.demo.domain.User;
 import com.youth_rd.demo.service.PlateAndClassService;
 import com.youth_rd.demo.tools.ServerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -28,19 +23,19 @@ public class MorePlates {
 
     //获取关注的板块信息
     @RequestMapping("/user/getFollowPlate")
-    public ServerResponse getFollowPlate(HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("user");
-        List<Map<String,Object>> resultList = plateAndClassService.getPlateByUserId(user.getId());
-        return ServerResponse.createBySuccess("获取用户关注的板块信息成功",resultList);
+    public ServerResponse getFollowPlate(@RequestParam("id") Integer id){
+        String result = plateAndClassService.getPlateByUserId(id);
+        return ServerResponse.createBySuccess("获取用户关注的板块信息成功",result);
 
     }
 
     //编辑关注的板块板块
     @RequestMapping(value = "/user/editFollowPlate",method = RequestMethod.POST)
-    public ServerResponse editFollowPlate(@RequestBody List<Map<String,Integer>> objs,
-                                          HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("user");
-        int result = plateAndClassService.editUserPlate(objs,user.getId());
+    public ServerResponse editFollowPlate(@RequestBody Map<String,String> jsonObj){
+        Integer id = Integer.valueOf(jsonObj.get("id"));
+        String value = jsonObj.get("value");
+
+        int result = plateAndClassService.editUserPlate(value,id);
         if(result==0){
             return ServerResponse.createByError("数据库异常，编辑关注板块失败");
         }

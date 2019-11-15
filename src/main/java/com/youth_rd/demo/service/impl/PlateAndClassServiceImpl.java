@@ -33,23 +33,13 @@ public class PlateAndClassServiceImpl implements PlateAndClassService {
     RedisTemplate redisTemplate;
 
     @Override
-    public List<Map<String, Object>> getPlateByUserId(Integer id) {
-        String key = "plates_"+id;
-        List<Style> styleList;
-        if(RedisTool.hasKey(redisTemplate,key)){
-            styleList = RedisTool.getList(redisTemplate,key);
-        }else{
-            styleList = styleMapper.selectByUserId(id);
-            RedisTool.setList(redisTemplate,key,styleList);
+    public String getPlateByUserId(Integer id) {
+        Style style = styleMapper.selectByUserId(id);
+        if(style==null){
+            styleMapper.insert(id,"");
+            return "";
         }
-        List<Map<String,Object>> resultList = new ArrayList<>();
-        for(Style s:styleList){
-            Map<String,Object> map = new HashMap<>();
-            map.put("id",s.getPlateId());
-            map.put("name",s.getPlate().getName());
-            resultList.add(map);
-        }
-        return resultList;
+        return style.getValue();
     }
 
     @Override
@@ -73,8 +63,8 @@ public class PlateAndClassServiceImpl implements PlateAndClassService {
     }
 
     @Override
-    public int editUserPlate(List<Map<String, Integer>> objs, Integer id) {
-        return plateMapper.updateById(objs,id);
+    public int editUserPlate(String value, Integer id) {
+        return styleMapper.updateByUserId(id,value);
     }
 
     @Override
