@@ -4,6 +4,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class RedisTool<T> {
@@ -20,5 +21,10 @@ public class RedisTool<T> {
     public static <T> void setList(RedisTemplate redisTemplate,String key, List<T> date){
         ValueOperations<String, List<T>> operations = redisTemplate.opsForValue();
         operations.set(key,date,10,TimeUnit.SECONDS);
+    }
+
+    public static void setBrowseData(RedisTemplate redisTemplate,String key,Map<String,Integer> map){
+        ValueOperations<String, Map<String,Integer>> operations = redisTemplate.opsForValue();
+        operations.set(key,map,10,TimeUnit.DAYS);
     }
 }

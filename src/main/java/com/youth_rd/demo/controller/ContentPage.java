@@ -4,11 +4,14 @@ import com.youth_rd.demo.domain.User;
 import com.youth_rd.demo.service.CommentService;
 import com.youth_rd.demo.service.InformationService;
 import com.youth_rd.demo.service.NewsService;
+import com.youth_rd.demo.tools.RedisTool;
 import com.youth_rd.demo.tools.ServerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,10 +27,23 @@ public class ContentPage {
     @Autowired
     InformationService informationService;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     //获取文章正文
     @RequestMapping("/getArticle")
     public ServerResponse getArticle(@RequestParam("id") Integer id,@RequestParam("userId") Integer userId){
         //TODO 增加历史记录
+        String key = String.valueOf(System.nanoTime());
+        Map<String, Integer> map = new HashMap<>();
+        if(userId!=null){
+            map.put("newsId",id);
+        }else{
+            map.put("newsId",id);
+            map.put("userId",id);
+        }
+        RedisTool.setBrowseData(redisTemplate,key,map);
+        redisTemplate.convertAndSend("browse",key);
         Map<String,Object> resultMap = newsService.getNewsContentById(id);
         return ServerResponse.createBySuccess("成功获取正文",resultMap);
     }
