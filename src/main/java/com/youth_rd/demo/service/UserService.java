@@ -19,6 +19,9 @@ public interface UserService {
     //通过邮箱查找用户
     User getUserByEmail(String email);
 
+    //通过ID获取用户
+    User getUserById(Integer id);
+
     //获取用户关注的用户列表
     List<Map<String,Object>> getFollowList(Integer curr,Integer limit,Integer id);
 

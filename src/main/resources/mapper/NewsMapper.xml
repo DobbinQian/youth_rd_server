@@ -119,9 +119,10 @@
         WHERE author_id = #{id,jdbcType=INTEGER} AND tag = -1
     </select>
     <select id="selectByFansId" resultMap="BaseResultMap">
-        SELECT *
-        FROM news
-        WHERE author_id in (SELECT focused_id FROM follow WHERE focus_id = #{id,jdbcType=INTEGER})
+        SELECT n.id,n.author_id,n.title,n.image,n.time,u.name
+        FROM news n
+        LEFT JOIN user u ON u.id = n.author_id
+        WHERE n.author_id in (SELECT focused_id FROM follow WHERE focus_id = #{id,jdbcType=INTEGER})
     </select>
     <select id="selectByTop" resultMap="BaseResultMap">
         SELECT *

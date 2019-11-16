@@ -26,7 +26,7 @@ public class ContentPage {
 
     //获取文章正文
     @RequestMapping("/getArticle")
-    public ServerResponse getArticle(@RequestParam("id") Integer id){
+    public ServerResponse getArticle(@RequestParam("id") Integer id,@RequestParam("userId") Integer userId){
         //TODO 增加历史记录
         Map<String,Object> resultMap = newsService.getNewsContentById(id);
         return ServerResponse.createBySuccess("成功获取正文",resultMap);

@@ -34,7 +34,7 @@ public class MorePlates {
     public ServerResponse editFollowPlate(@RequestBody Map<String,String> jsonObj){
         Integer id = Integer.valueOf(jsonObj.get("id"));
         String value = jsonObj.get("value");
-
+        System.out.println("value:"+value);
         int result = plateAndClassService.editUserPlate(value,id);
         if(result==0){
             return ServerResponse.createByError("数据库异常，编辑关注板块失败");

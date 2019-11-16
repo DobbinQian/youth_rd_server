@@ -49,9 +49,10 @@ public class PublicSector {
 
     //获取动态
     @RequestMapping("/user/getActionList")
-    public ServerResponse getActionList(@RequestParam("curr")Integer curr,@RequestParam("limit")Integer limit, HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("user");
-        List<Map<String,Object>> resultList = newsService.getNewsByUserFollow(user.getId(),curr,limit);
+    public ServerResponse getActionList(@RequestParam("id") Integer id,
+                                        @RequestParam("curr")Integer curr,
+                                        @RequestParam("limit")Integer limit){
+        List<Map<String,Object>> resultList = newsService.getNewsByUserFollow(id,curr,limit);
         return ServerResponse.createBySuccess("获取动态成功",resultList);
     }
 

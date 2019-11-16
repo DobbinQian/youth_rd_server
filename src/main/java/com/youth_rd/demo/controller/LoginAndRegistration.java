@@ -163,7 +163,7 @@ public class LoginAndRegistration {
         String email = jsonObj.get("email");
         String pwd = jsonObj.get("pwd");
         String rePwd = jsonObj.get("rePwd");
-        if(pwd!=rePwd){
+        if(!pwd.equals(rePwd)){
             return ServerResponse.createByError("重复密码不正确");
         }
 

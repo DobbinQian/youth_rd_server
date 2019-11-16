@@ -63,6 +63,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserById(Integer id) {
+        return userMapper.selectById(id);
+    }
+
+    @Override
     public List<Map<String, Object>> getFollowList(Integer curr,Integer limit,Integer id) {
         String key = "userFollows_"+id;
         List<User> userList;

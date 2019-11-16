@@ -74,11 +74,19 @@ public class UserCenter {
     @RequestMapping(value = "/user/editUserData",method = RequestMethod.POST)
     public ServerResponse editUserData(@RequestBody Map<String,String> jsonObj,
                                        HttpServletRequest request){
+        String id = jsonObj.get("id");
         String img = jsonObj.get("img");
         String name = jsonObj.get("name");
-        Integer sex = Integer.valueOf(jsonObj.get("sex"));
+        String sex = jsonObj.get("sex");
 
-        User user = (User)request.getSession().getAttribute("user");
+
+        if(id==null){
+            return ServerResponse.createByError("id参数为空");
+        }
+        User user = userService.getUserById(Integer.valueOf(id));
+        if(user==null){
+            return ServerResponse.createByError("用户不存在");
+        }
         if(img!=null){
             user.setImage(img);
         }
@@ -86,7 +94,7 @@ public class UserCenter {
             user.setName(name);
         }
         if(sex!=null){
-            user.setSex(sex);
+            user.setSex(Integer.valueOf(sex));
         }
         int result = userService.updateUserData(user);
         if(result==0){
