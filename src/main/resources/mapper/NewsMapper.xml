@@ -162,12 +162,56 @@
         WHERE n.tag = 1 AND n.class_id = #{id,jdbcType=INTEGER}
         ORDER BY n.time
     </select>
+    <select id="selectByDayBrowse" resultMap="BaseResultMap">
+        SELECT n.id,n.title,
+        (SELECT COUNT(id) FROM history h
+        WHERE h.news_id = n.id AND time >=(NOW() - interval 24 hour)) AS browse
+        FROM news n
+        ORDER By browse DESC
+    </select>
+    <select id="selectByDayComments" resultMap="BaseResultMap">
+        SELECT n.id,n.title,
+        (SELECT COUNT(id)
+        FROM comment co
+        WHERE co.news_id = n.id AND time >=(NOW() - interval 24 hour)) AS comments
+        FROM news n
+        ORDER By comments DESC
+    </select>
+    <select id="selectByWeekBrowse" resultMap="BaseResultMap">
+        SELECT n.id,n.title,
+        (SELECT COUNT(id) FROM history h
+        WHERE h.news_id = n.id AND time >=(NOW() - interval 7 day)) AS browse
+        FROM news n
+        ORDER By browse DESC
+    </select>
+    <select id="selectByWeekComments" resultMap="BaseResultMap">
+        SELECT n.id,n.title,
+        (SELECT COUNT(id)
+        FROM comment co
+        WHERE co.news_id = n.id AND time >=(NOW() - interval 7 day)) AS comments
+        FROM news n
+        ORDER By comments DESC
+    </select>
+    <select id="selectByMonthBrows" resultMap="BaseResultMap">
+        SELECT n.id,n.title,
+        (SELECT COUNT(id) FROM history h
+        WHERE h.news_id = n.id AND time >=(NOW() - interval 1 month)) AS browse
+        FROM news n
+        ORDER By browse DESC
+    </select>
+    <select id="selectByMonthComments" resultMap="BaseResultMap">
+        SELECT n.id,n.title,
+        (SELECT COUNT(id)
+        FROM comment co
+        WHERE co.news_id = n.id AND time >=(NOW() - interval 1 month)) AS comments
+        FROM news n
+        ORDER By comments DESC
+    </select>
     <select id="selectAllAuditList" resultMap="BaseResultMap">
         SELECT *
         FROM news
         WHERE tag = 0
     </select>
-
     <select id="selectByIdTitle" resultMap="BaseResultMap">
         SELECT *
         FROM news

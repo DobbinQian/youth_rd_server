@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -52,6 +49,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setNewsId(newsId);
         comment.setUserId(userId);
         comment.setContent(content);
+        comment.setTime(new Date());
         return commentMapper.insert(comment);
     }
 
@@ -62,6 +60,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setUserId(userId);
         comment.setContent(content);
         comment.setReplyId(commentId);
+        comment.setTime(new Date());
         return commentMapper.insert(comment);
     }
 }

@@ -4,6 +4,7 @@ import com.youth_rd.demo.domain.User;
 import com.youth_rd.demo.service.CommentService;
 import com.youth_rd.demo.service.InformationService;
 import com.youth_rd.demo.service.NewsService;
+import com.youth_rd.demo.service.UserService;
 import com.youth_rd.demo.tools.RedisTool;
 import com.youth_rd.demo.tools.ServerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class ContentPage {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    UserService userService;
 
     //获取文章正文
     @RequestMapping("/getArticle")
@@ -73,21 +77,39 @@ public class ContentPage {
     @RequestMapping(value = "/user/comment",method = RequestMethod.POST)
     public ServerResponse comment(@RequestBody Map<String,String> jsonObj,
                                   HttpServletRequest request){
-        Integer id = Integer.valueOf(jsonObj.get("id"));
-        Integer cid = Integer.valueOf(jsonObj.get("cid"));
+        String id = jsonObj.get("id");
+        String userId = jsonObj.get("userId");
+        String cid = jsonObj.get("cid");
         String content = jsonObj.get("content");
-        if(!newsService.newsIsExistById(id)){
+
+        if(id==null){
+            return ServerResponse.createByError("id参数为空");
+        }
+        if(userId==null){
+            return ServerResponse.createByError("userId参数为空");
+        }
+        if(cid==null){
+            return ServerResponse.createByError("cid参数为空");
+        }
+        if(content==null){
+            return ServerResponse.createByError("content参数为空");
+        }
+
+        if(!newsService.newsIsExistById(Integer.valueOf(id))){
             return ServerResponse.createByError("指定新闻不存在");
         }
         int result=0;
-        User user = (User) request.getSession().getAttribute("user");
-        if(cid>0){
-            if(!commentService.commentIsExistById(cid)){
+        User user = userService.getUserById(Integer.valueOf(userId));
+        if(user==null){
+            return ServerResponse.createByError("指定用户不存在");
+        }
+        if(Integer.valueOf(cid)>0){
+            if(!commentService.commentIsExistById(Integer.valueOf(cid))){
                 return ServerResponse.createByError("指定评论不存在");
             }
-            result = commentService.commentByNewsIdAndCId(id,user.getId(),cid,content);
+            result = commentService.commentByNewsIdAndCId(Integer.valueOf(id),user.getId(),Integer.valueOf(cid),content);
         }else{
-            result = commentService.commentByNewsId(id,user.getId(),content);
+            result = commentService.commentByNewsId(Integer.valueOf(id),user.getId(),content);
         }
         if(result==0){
             return ServerResponse.createByError("数据库异常，评论失败");

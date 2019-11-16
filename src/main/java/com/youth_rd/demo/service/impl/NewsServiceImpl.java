@@ -208,7 +208,76 @@ public class NewsServiceImpl implements NewsService {
 //        Map<String,Object> monthMap = new HashMap<>();
 //        List<News>
 
-        return null;
+        Map<String,Object> resultMap = new HashMap<>();
+        Map<String,Object> dayMap = new HashMap<>();
+
+        List<Map<String,Object>> list = new ArrayList<>();
+        List<News> newsListDB = newsMapper.selectByDayBrowse();
+        for(News n:newsListDB){
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",n.getId());
+            map.put("title",n.getTitle());
+            map.put("number",n.getBrowse());
+            list.add(map);
+        }
+        dayMap.put("browse",list);
+        List<News> newsListDC = newsMapper.selectByDayComments();
+        list.clear();
+        for(News n:newsListDC){
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",n.getId());
+            map.put("title",n.getTitle());
+            map.put("number",n.getComments());
+            list.add(map);
+        }
+        dayMap.put("comments",list);
+        resultMap.put("day",dayMap);
+        dayMap.clear();
+        List<News> newsListWB = newsMapper.selectByWeekBrowse();
+        list.clear();
+        for(News n:newsListWB){
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",n.getId());
+            map.put("title",n.getTitle());
+            map.put("number",n.getBrowse());
+            list.add(map);
+        }
+        dayMap.put("browse",list);
+        List<News> newsListWC = newsMapper.selectByWeekComments();
+        list.clear();
+        for(News n:newsListWC){
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",n.getId());
+            map.put("title",n.getTitle());
+            map.put("number",n.getComments());
+            list.add(map);
+        }
+        dayMap.put("comments",list);
+        resultMap.put("week",dayMap);
+        dayMap.clear();
+        List<News> newsListMB = newsMapper.selectByMonthBrows();
+        list.clear();
+        for(News n:newsListMB){
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",n.getId());
+            map.put("title",n.getTitle());
+            map.put("number",n.getBrowse());
+            list.add(map);
+        }
+        dayMap.put("browse",list);
+        List<News> newsListMC = newsMapper.selectByMonthComments();
+        list.clear();
+        for(News n:newsListMC){
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",n.getId());
+            map.put("title",n.getTitle());
+            map.put("number",n.getComments());
+            list.add(map);
+        }
+        dayMap.put("comments",list);
+        resultMap.put("month",dayMap);
+
+        return resultMap;
     }
 
     @Override
