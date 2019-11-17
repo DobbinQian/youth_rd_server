@@ -9,6 +9,7 @@ import com.youth_rd.demo.tools.RedisTool;
 import com.youth_rd.demo.tools.ServerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,20 +35,24 @@ public class ContentPage {
     @Autowired
     UserService userService;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+
     //获取文章正文
     @RequestMapping("/getArticle")
     public ServerResponse getArticle(@RequestParam("id") Integer id,@RequestParam("userId") Integer userId){
-        //TODO 增加历史记录
+        System.out.println("/getArticle");
         String key = String.valueOf(System.nanoTime());
         Map<String, Integer> map = new HashMap<>();
-        if(userId!=null){
+        if(userId==-1){
             map.put("newsId",id);
         }else{
             map.put("newsId",id);
             map.put("userId",id);
         }
         RedisTool.setBrowseData(redisTemplate,key,map);
-        redisTemplate.convertAndSend("browse",key);
+        stringRedisTemplate.convertAndSend("browse",key);
         Map<String,Object> resultMap = newsService.getNewsContentById(id);
         return ServerResponse.createBySuccess("成功获取正文",resultMap);
     }
@@ -55,6 +60,7 @@ public class ContentPage {
     //获取月、周、日榜单
     @RequestMapping("/getList")
     public ServerResponse getList(){
+        System.out.println("/getList");
         Map<String,Object> resultMap = newsService.getRankList();
         return ServerResponse.createBySuccess("获取榜单成功",resultMap);
     }
@@ -62,6 +68,7 @@ public class ContentPage {
     //获取相关推荐
     @RequestMapping("/getRecommendList")
     public ServerResponse getRecommendList(@RequestParam("id") Integer id){
+        System.out.println("/getRecommendList");
         List<Map<String,Object>> resultList = newsService.getRecommendListById(id);
         return ServerResponse.createBySuccess("获取推荐列表成功",resultList);
     }
@@ -69,6 +76,7 @@ public class ContentPage {
     //获取评论信息
     @RequestMapping("/getCommentsList")
     public ServerResponse getCommentsList(@RequestParam("id") Integer id){
+        System.out.println("/getCommentsList");
         List<Map<String,Object>> resultList = commentService.getCommentByNewsId(id);
         return ServerResponse.createBySuccess("获取评论列表成功",resultList);
     }
@@ -77,6 +85,7 @@ public class ContentPage {
     @RequestMapping(value = "/user/comment",method = RequestMethod.POST)
     public ServerResponse comment(@RequestBody Map<String,String> jsonObj,
                                   HttpServletRequest request){
+        System.out.println("/user/comment");
         String id = jsonObj.get("id");
         String userId = jsonObj.get("userId");
         String cid = jsonObj.get("cid");

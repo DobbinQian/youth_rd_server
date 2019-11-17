@@ -39,7 +39,6 @@ public class RedisListenerConfig {
      */
     @Bean
     MessageListenerAdapter listenerAdapter(BrowseServiceImpl browseService) {
-        System.out.println("更新浏览记录");
         return new MessageListenerAdapter(browseService, "updateBrowseData");
     }
 

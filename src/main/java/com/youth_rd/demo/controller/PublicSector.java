@@ -35,6 +35,7 @@ public class PublicSector {
     //获取公共板块信息
     @RequestMapping("/getPS")
     public ServerResponse getPS(HttpServletRequest request){
+        System.out.println("/getPS");
         Map<String,Object> resultMap = new HashMap<>();
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute("user");
@@ -52,6 +53,7 @@ public class PublicSector {
     public ServerResponse getActionList(@RequestParam("id") Integer id,
                                         @RequestParam("curr")Integer curr,
                                         @RequestParam("limit")Integer limit){
+        System.out.println("/user/getActionList");
         List<Map<String,Object>> resultList = newsService.getNewsByUserFollow(id,curr,limit);
         return ServerResponse.createBySuccess("获取动态成功",resultList);
     }

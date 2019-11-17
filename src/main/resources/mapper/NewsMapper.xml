@@ -99,9 +99,14 @@
         </trim>
     </insert>
     <select id="selectById" resultMap="BaseResultMap">
-        SELECT *
-        FROM news
-        WHERE id = #{id,jdbcType=INTEGER}
+        SELECT n.id,n.author_id,n.title,n.image,n.time,u.id,u.name,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
+        (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
+        (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
+        FROM news n
+        LEFT JOIN user u ON u.id = n.author_id
+        LEFT JOIN class c ON c.id = n.class_id
+        LEFT JOIN plate p ON p.id = c.plate_id
+        WHERE n.id = #{id,jdbcType=INTEGER}
     </select>
     <select id="selectPassByUserId" resultMap="BaseResultMap">
         SELECT *

@@ -26,6 +26,7 @@ public class HomePage {
     //获取新闻列表
     @RequestMapping("/getNewsList")
     public ServerResponse getNewsList(@RequestParam("curr")Integer curr, @RequestParam("limit")Integer limit){
+        System.out.println("/getNewsList");
         List<Map<String,Object>> resultList = newsService.getNewsList(curr,limit);
         return ServerResponse.createBySuccess("获取首页新闻成功",resultList);
     }

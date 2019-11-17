@@ -7,12 +7,14 @@ import com.youth_rd.demo.tools.PageTool;
 import com.youth_rd.demo.tools.RedisTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -185,6 +187,8 @@ public class NewsServiceImpl implements NewsService {
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("id",news.getId());
         resultMap.put("title",news.getTitle());
+        resultMap.put("classId",news.getClassId());
+        resultMap.put("plateId",news.getPlate().getId());
         resultMap.put("authorId",news.getAuthorId());
         resultMap.put("authorName",news.getAuthor().getName());
         resultMap.put("date",news.getTime());
@@ -196,21 +200,15 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Map<String, Object> getRankList() {
-//        String key = "RankList";
-//        Map<String,Object> resultMap;
-//        ValueOperations<String, Map<String,Object>> operations = redisTemplate.opsForValue();
-//        if(redisTemplate.hasKey(key)){
-//            resultMap = operations.get(key);
-//            return resultMap;
-//        }
-//
-//        resultMap = new HashMap<>();
-//        Map<String,Object> monthMap = new HashMap<>();
-//        List<News>
-
-        Map<String,Object> resultMap = new HashMap<>();
+        String key = "RankList";
+        Map<String,Object> resultMap;
+        ValueOperations<String, Map<String,Object>> operations = redisTemplate.opsForValue();
+        if(redisTemplate.hasKey(key)){
+            resultMap = operations.get(key);
+            return resultMap;
+        }
+        resultMap = new HashMap<>();
         Map<String,Object> dayMap = new HashMap<>();
-
         List<Map<String,Object>> list = new ArrayList<>();
         List<News> newsListDB = newsMapper.selectByDayBrowse();
         for(News n:newsListDB){
@@ -277,11 +275,13 @@ public class NewsServiceImpl implements NewsService {
         dayMap.put("comments",list);
         resultMap.put("month",dayMap);
 
+        operations.set(key,resultMap,10, TimeUnit.MINUTES);
         return resultMap;
     }
 
     @Override
     public List<Map<String, Object>> getRecommendListById(Integer id) {
-        return null;
+
+        return getNewsList(1,10);
     }
 }
