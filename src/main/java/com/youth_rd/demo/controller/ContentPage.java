@@ -130,16 +130,34 @@ public class ContentPage {
     @RequestMapping(value = "/user/feedback",method = RequestMethod.POST)
     public ServerResponse feedback(@RequestBody Map<String,String> jsonObj,
                                    HttpServletRequest request){
-        Integer id = Integer.valueOf(jsonObj.get("id"));
-        Integer op = Integer.valueOf(jsonObj.get("op"));
+        String id = jsonObj.get("id");
+        String userId = jsonObj.get("userId");
         String content = jsonObj.get("content");
-        if(!newsService.newsIsExistById(id)){
+
+        String errStr = "";
+
+        if(id==null){
+            errStr="id为空";
+        }
+
+        if(content==null){
+            errStr+="contentId为空_";
+        }
+
+        if(userId==null){
+            errStr+="userId为空_";
+        }
+
+        if(errStr.length()>0){
+            return ServerResponse.createByError(errStr);
+        }
+
+        if(!newsService.newsIsExistById(Integer.valueOf(id))){
             return ServerResponse.createByError("指定新闻不存在");
         }
-        User user = (User) request.getSession().getAttribute("user");
-        int result = informationService.feedbackByNewsId(id,user.getId(),content);
+        int result = informationService.feedbackByNewsId(Integer.valueOf(id),Integer.valueOf(userId),content);
         if(result==0){
-            return ServerResponse.createByError("数据库异常，评论失败");
+            return ServerResponse.createByError("数据库异常，反馈失败");
         }
         return ServerResponse.createByCheckSuccess();
     }

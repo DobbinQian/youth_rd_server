@@ -22,12 +22,15 @@ public class ContributeServiceImpl implements ContributeService {
     @Autowired
     RedisTemplate redisTemplate;
     @Override
-    public int contribute(String title, Integer classId, String content, User author) {
+    public int contribute(String title,String img,Integer classId, String content, User author) {
         News news = new News();
         news.setTitle(title);
         news.setClassId(classId);
         news.setContent(content);
         news.setAuthorId(author.getId());
+        news.setImage(img);
+        news.setIsDelete(0);
+        news.setTag(0);
         return newsMapper.insert(news);
     }
 

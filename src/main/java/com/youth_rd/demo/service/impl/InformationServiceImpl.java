@@ -45,6 +45,7 @@ public class InformationServiceImpl implements InformationService {
         information.setReceiveId(1);
         information.setSendTime(new Date());
         information.setContent(newsId+content);
+        information.setIsReply(0);
         return informationMapper.insert(information);
     }
 
@@ -55,6 +56,7 @@ public class InformationServiceImpl implements InformationService {
         information.setReceiveId(userId);
         information.setSendTime(new Date());
         information.setContent(content);
+        information.setIsReply(0);
         return informationMapper.insert(information);
     }
 }

@@ -38,7 +38,7 @@
         </association>
     </resultMap>
     <insert id="insert" parameterType="com.youth_rd.demo.domain.News">
-        INSERT JOIN news
+        INSERT INTO news
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="classId != null" >
                 class_id,
@@ -66,6 +66,9 @@
             </if>
             <if test="auditContent != null" >
                 auditContent,
+            </if>
+            <if test="authorId != null" >
+                author_id,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -95,6 +98,9 @@
             </if>
             <if test="auditContent != null" >
                 #{auditContent,jdbcType=VARCHAR},
+            </if>
+            <if test="authorId != null" >
+                #{authorId,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>

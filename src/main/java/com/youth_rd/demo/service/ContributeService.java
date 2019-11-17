@@ -8,7 +8,7 @@ import java.util.Map;
 public interface ContributeService {
 
     //投稿
-    int contribute(String title, Integer classId, String content, User author);
+    int contribute(String title,String img,Integer classId, String content, User author);
 
     //获取已投稿的新闻
     List<Map<String,Object>> getContributeList(Integer id,Integer curr,Integer limit);

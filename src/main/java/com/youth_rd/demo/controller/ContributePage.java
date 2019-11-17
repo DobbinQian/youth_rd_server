@@ -1,5 +1,6 @@
 package com.youth_rd.demo.controller;
 
+import com.youth_rd.demo.dao.UserMapper;
 import com.youth_rd.demo.domain.User;
 import com.youth_rd.demo.service.ContributeService;
 import com.youth_rd.demo.tools.ServerResponse;
@@ -16,17 +17,46 @@ public class ContributePage {
     @Autowired
     private ContributeService contributeService;
 
+    @Autowired
+    private UserMapper userMapper;
+
     //投稿
     @RequestMapping(value = "/user/contribute",method = RequestMethod.POST)
     public ServerResponse contribute(@RequestBody Map<String,String> jsonObj,
                                      HttpServletRequest request){
-        Integer classId = Integer.valueOf(jsonObj.get("classId"));
+
+        String classId = jsonObj.get("classId");
         String title = jsonObj.get("title");
         String content = jsonObj.get("content");
+        String userId = jsonObj.get("userId");
+        String img = jsonObj.get("img");
 
-        User user = (User) request.getSession().getAttribute("user");
+        String errStr = "";
 
-        int result = contributeService.contribute(title,classId,content,user);
+        if(classId==null){
+            errStr+="classId为空_";
+        }
+
+        if(title==null){
+            errStr+="titleId为空_";
+        }
+
+        if(content==null){
+            errStr+="contentId为空_";
+        }
+
+        if(userId==null){
+            errStr+="userId为空_";
+        }
+        if(img==null){
+            errStr+="img为空";
+        }
+        if(errStr.length()>0){
+            return ServerResponse.createByError(errStr);
+        }
+        User user = userMapper.selectById(Integer.valueOf(userId));
+
+        int result = contributeService.contribute(title,img,Integer.valueOf(classId),content,user);
 
         if(result==0){
             return ServerResponse.createByError("数据库错误，投稿失败");
