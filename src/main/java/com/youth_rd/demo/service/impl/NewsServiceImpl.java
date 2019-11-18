@@ -7,14 +7,12 @@ import com.youth_rd.demo.tools.PageTool;
 import com.youth_rd.demo.tools.RedisTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -202,11 +200,11 @@ public class NewsServiceImpl implements NewsService {
     public Map<String, Object> getRankList() {
         String key = "RankList";
         Map<String,Object> resultMap;
-        ValueOperations<String, Map<String,Object>> operations = redisTemplate.opsForValue();
-        if(redisTemplate.hasKey(key)){
-            resultMap = operations.get(key);
-            return resultMap;
-        }
+//        ValueOperations<String, Map<String,Object>> operations = redisTemplate.opsForValue();
+//        if(redisTemplate.hasKey(key)){
+//            resultMap = operations.get(key);
+//            return resultMap;
+//        }
         resultMap = new HashMap<>();
         Map<String,Object> dayMap = new HashMap<>();
         List<Map<String,Object>> list = new ArrayList<>();
@@ -218,7 +216,7 @@ public class NewsServiceImpl implements NewsService {
             map.put("number",n.getBrowse());
             list.add(map);
         }
-        dayMap.put("browse",list);
+        dayMap.put("browse",new ArrayList<>(list));
         List<News> newsListDC = newsMapper.selectByDayComments();
         list.clear();
         for(News n:newsListDC){
@@ -228,8 +226,8 @@ public class NewsServiceImpl implements NewsService {
             map.put("number",n.getComments());
             list.add(map);
         }
-        dayMap.put("comments",list);
-        resultMap.put("day",dayMap);
+        dayMap.put("comments",new ArrayList<>(list));
+        resultMap.put("day",new HashMap<>(dayMap));
         dayMap.clear();
         List<News> newsListWB = newsMapper.selectByWeekBrowse();
         list.clear();
@@ -240,7 +238,7 @@ public class NewsServiceImpl implements NewsService {
             map.put("number",n.getBrowse());
             list.add(map);
         }
-        dayMap.put("browse",list);
+        dayMap.put("browse",new ArrayList<>(list));
         List<News> newsListWC = newsMapper.selectByWeekComments();
         list.clear();
         for(News n:newsListWC){
@@ -250,8 +248,8 @@ public class NewsServiceImpl implements NewsService {
             map.put("number",n.getComments());
             list.add(map);
         }
-        dayMap.put("comments",list);
-        resultMap.put("week",dayMap);
+        dayMap.put("comments",new ArrayList<>(list));
+        resultMap.put("week",new HashMap<>(dayMap));
         dayMap.clear();
         List<News> newsListMB = newsMapper.selectByMonthBrows();
         list.clear();
@@ -262,7 +260,7 @@ public class NewsServiceImpl implements NewsService {
             map.put("number",n.getBrowse());
             list.add(map);
         }
-        dayMap.put("browse",list);
+        dayMap.put("browse",new ArrayList<>(list));
         List<News> newsListMC = newsMapper.selectByMonthComments();
         list.clear();
         for(News n:newsListMC){
@@ -272,10 +270,10 @@ public class NewsServiceImpl implements NewsService {
             map.put("number",n.getComments());
             list.add(map);
         }
-        dayMap.put("comments",list);
-        resultMap.put("month",dayMap);
+        dayMap.put("comments",new ArrayList<>(list));
+        resultMap.put("month",new HashMap<>(dayMap));
 
-        operations.set(key,resultMap,10, TimeUnit.MINUTES);
+//        operations.set(key,resultMap,10, TimeUnit.MINUTES);
         return resultMap;
     }
 

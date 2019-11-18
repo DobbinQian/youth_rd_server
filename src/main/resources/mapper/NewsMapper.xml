@@ -105,7 +105,7 @@
         </trim>
     </insert>
     <select id="selectById" resultMap="BaseResultMap">
-        SELECT n.id,n.author_id,n.title,n.image,n.time,u.id,u.name,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
+        SELECT n.id,n.author_id,n.title,n.image,n.time,u.id,n.content,u.name,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
         (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
         (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
         FROM news n
@@ -178,6 +178,7 @@
         (SELECT COUNT(id) FROM history h
         WHERE h.news_id = n.id AND time >=(NOW() - interval 24 hour)) AS browse
         FROM news n
+        WHERE n.tag>0
         ORDER By browse DESC
     </select>
     <select id="selectByDayComments" resultMap="BaseResultMap">
@@ -186,6 +187,7 @@
         FROM comment co
         WHERE co.news_id = n.id AND time >=(NOW() - interval 24 hour)) AS comments
         FROM news n
+        WHERE n.tag>0
         ORDER By comments DESC
     </select>
     <select id="selectByWeekBrowse" resultMap="BaseResultMap">
@@ -193,6 +195,7 @@
         (SELECT COUNT(id) FROM history h
         WHERE h.news_id = n.id AND time >=(NOW() - interval 7 day)) AS browse
         FROM news n
+        WHERE n.tag>0
         ORDER By browse DESC
     </select>
     <select id="selectByWeekComments" resultMap="BaseResultMap">
@@ -201,6 +204,7 @@
         FROM comment co
         WHERE co.news_id = n.id AND time >=(NOW() - interval 7 day)) AS comments
         FROM news n
+        WHERE n.tag>0
         ORDER By comments DESC
     </select>
     <select id="selectByMonthBrows" resultMap="BaseResultMap">
@@ -208,6 +212,7 @@
         (SELECT COUNT(id) FROM history h
         WHERE h.news_id = n.id AND time >=(NOW() - interval 1 month)) AS browse
         FROM news n
+        WHERE n.tag>0
         ORDER By browse DESC
     </select>
     <select id="selectByMonthComments" resultMap="BaseResultMap">
@@ -216,6 +221,7 @@
         FROM comment co
         WHERE co.news_id = n.id AND time >=(NOW() - interval 1 month)) AS comments
         FROM news n
+        WHERE n.tag>0
         ORDER By comments DESC
     </select>
     <select id="selectAllAuditList" resultMap="BaseResultMap">

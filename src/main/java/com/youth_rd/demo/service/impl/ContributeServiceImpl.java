@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ContributeServiceImpl implements ContributeService {
@@ -29,6 +26,7 @@ public class ContributeServiceImpl implements ContributeService {
         news.setContent(content);
         news.setAuthorId(author.getId());
         news.setImage(img);
+        news.setTime(new Date());
         news.setIsDelete(0);
         news.setTag(0);
         return newsMapper.insert(news);
