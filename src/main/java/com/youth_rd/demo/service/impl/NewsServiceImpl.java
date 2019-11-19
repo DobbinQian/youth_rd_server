@@ -7,12 +7,15 @@ import com.youth_rd.demo.tools.PageTool;
 import com.youth_rd.demo.tools.RedisTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -20,6 +23,8 @@ public class NewsServiceImpl implements NewsService {
     NewsMapper newsMapper;
     @Autowired
     RedisTemplate redisTemplate;
+
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public boolean newsIsExistById(Integer id) {
@@ -49,7 +54,7 @@ public class NewsServiceImpl implements NewsService {
             map.put("img",n.getImage());
             map.put("authorId",n.getAuthorId());
             map.put("authorName",n.getAuthor().getName());
-            map.put("date",n.getTime());
+            map.put("date",formatter.format(n.getTime()));
             resultList.add(map);
         }
         return resultList;
@@ -95,7 +100,7 @@ public class NewsServiceImpl implements NewsService {
             Map<String,Object> map = new HashMap<>();
             map.put("title",n.getTitle());
             map.put("img",n.getImage());
-            map.put("date",n.getTime());
+            map.put("date",formatter.format(n.getTime()));
             map.put("id",n.getId());
             map.put("authorId",n.getAuthorId());
             map.put("authorName",n.getAuthor().getName());
@@ -129,7 +134,7 @@ public class NewsServiceImpl implements NewsService {
             Map<String,Object> map = new HashMap<>();
             map.put("title",n.getTitle());
             map.put("img",n.getImage());
-            map.put("date",n.getTime());
+            map.put("date",formatter.format(n.getTime()));
             map.put("id",n.getId());
             map.put("authorId",n.getAuthorId());
             map.put("authorName",n.getAuthor().getName());
@@ -163,7 +168,7 @@ public class NewsServiceImpl implements NewsService {
             Map<String,Object> map = new HashMap<>();
             map.put("title",n.getTitle());
             map.put("img",n.getImage());
-            map.put("date",n.getTime());
+            map.put("date",formatter.format(n.getTime()));
             map.put("id",n.getId());
             map.put("authorId",n.getAuthorId());
             map.put("authorName",n.getAuthor().getName());
@@ -189,7 +194,7 @@ public class NewsServiceImpl implements NewsService {
         resultMap.put("plateId",news.getPlate().getId());
         resultMap.put("authorId",news.getAuthorId());
         resultMap.put("authorName",news.getAuthor().getName());
-        resultMap.put("date",news.getTime());
+        resultMap.put("date",formatter.format(news.getTime()));
         resultMap.put("browse",news.getBrowse());
         resultMap.put("comments",news.getComments());
         resultMap.put("content",news.getContent());
@@ -200,11 +205,11 @@ public class NewsServiceImpl implements NewsService {
     public Map<String, Object> getRankList() {
         String key = "RankList";
         Map<String,Object> resultMap;
-//        ValueOperations<String, Map<String,Object>> operations = redisTemplate.opsForValue();
-//        if(redisTemplate.hasKey(key)){
-//            resultMap = operations.get(key);
-//            return resultMap;
-//        }
+        ValueOperations<String, Map<String,Object>> operations = redisTemplate.opsForValue();
+        if(redisTemplate.hasKey(key)){
+            resultMap = operations.get(key);
+            return resultMap;
+        }
         resultMap = new HashMap<>();
         Map<String,Object> dayMap = new HashMap<>();
         List<Map<String,Object>> list = new ArrayList<>();
@@ -273,7 +278,7 @@ public class NewsServiceImpl implements NewsService {
         dayMap.put("comments",new ArrayList<>(list));
         resultMap.put("month",new HashMap<>(dayMap));
 
-//        operations.set(key,resultMap,10, TimeUnit.MINUTES);
+        operations.set(key,resultMap,10, TimeUnit.MINUTES);
         return resultMap;
     }
 

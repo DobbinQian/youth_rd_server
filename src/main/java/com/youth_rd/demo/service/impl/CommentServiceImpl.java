@@ -3,12 +3,15 @@ package com.youth_rd.demo.service.impl;
 import com.youth_rd.demo.dao.CommentMapper;
 import com.youth_rd.demo.domain.Comment;
 import com.youth_rd.demo.service.CommentService;
+import com.youth_rd.demo.tools.CommentListFormat;
 import com.youth_rd.demo.tools.RedisTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -26,14 +29,27 @@ public class CommentServiceImpl implements CommentService {
             commentList = commentMapper.selectByNewsId(id);
             RedisTool.setList(redisTemplate,key,commentList);
         }
-        List<Map<String,Object>> resultList = new ArrayList<>();
-        for(Comment c:commentList){
-            Map<String,Object> map = new HashMap<>();
-            map.put("id",c.getId());
-            map.put("cid",c.getReplyId());
-            map.put("content",c.getContent());
-            resultList.add(map);
-        }
+        List<Map<String,Object>> resultList;
+        resultList = CommentListFormat.format(commentList,null);
+
+
+
+
+
+
+
+
+
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        List<Map<String,Object>> resultList = new ArrayList<>();
+//        for(Comment c:commentList){
+//            Map<String,Object> map = new HashMap<>();
+//            map.put("id",c.getId());
+//            map.put("cid",c.getReplyId());
+//            map.put("content",c.getContent());
+//            map.put("date",formatter.format(c.getTime()));
+//            resultList.add(map);
+//        }
         return resultList;
     }
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -42,6 +43,7 @@ public class ContributeServiceImpl implements ContributeService {
             newsList = newsMapper.selectPassByUserId(id);
             RedisTool.setList(redisTemplate,key,newsList);
         }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         newsList = PageTool.getDateByCL(newsList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
         for(News n:newsList){
@@ -50,7 +52,7 @@ public class ContributeServiceImpl implements ContributeService {
             map.put("title",n.getTitle());
             map.put("browse",n.getBrowse());
             map.put("comments",n.getComments());
-            map.put("date",n.getTime());
+            map.put("date",formatter.format(n.getTime()));
             resultList.add(map);
         }
         return resultList;
@@ -66,13 +68,14 @@ public class ContributeServiceImpl implements ContributeService {
             newsList = newsMapper.selectAuditByUserId(id);
             RedisTool.setList(redisTemplate,key,newsList);
         }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         newsList = PageTool.getDateByCL(newsList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",n.getId());
             map.put("title",n.getTitle());
-            map.put("date",n.getTime());
+            map.put("date",formatter.format(n.getTime()));
             resultList.add(map);
         }
         return resultList;
@@ -88,14 +91,15 @@ public class ContributeServiceImpl implements ContributeService {
             newsList = newsMapper.selectReturnByUserId(id);
             RedisTool.setList(redisTemplate,key,newsList);
         }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         newsList = PageTool.getDateByCL(newsList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",n.getId());
             map.put("title",n.getTitle());
-            map.put("content",n.getTime());
-            map.put("pullDate",n.getTime());
+            map.put("content",n.getAuditContent());
+            map.put("pullDate",formatter.format(n.getTime()));
             resultList.add(map);
         }
         return resultList;

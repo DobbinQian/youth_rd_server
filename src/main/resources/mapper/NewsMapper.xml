@@ -115,9 +115,10 @@
         WHERE n.id = #{id,jdbcType=INTEGER}
     </select>
     <select id="selectPassByUserId" resultMap="BaseResultMap">
-        SELECT *
-        FROM news
-        WHERE author_id = #{id,jdbcType=INTEGER}
+        SELECT n.*,(SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
+        (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
+        FROM news n
+        WHERE n.author_id = #{id,jdbcType=INTEGER} AND n.tag > 0
     </select>
     <select id="selectAuditByUserId" resultMap="BaseResultMap">
         SELECT *
