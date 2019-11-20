@@ -90,7 +90,9 @@ public class ContributePage {
 
         User user = userService.getUserById(id);
         List<Map<String,Object>> resultList = contributeService.getContributeList(user.getId(),curr,limit);
-        return ServerResponse.createBySuccess("获取已投稿新闻成功",resultList);
+        String number = String.valueOf(resultList.get(0).get("number"));
+        resultList.remove(resultList.get(0));
+        return ServerResponse.createBySuccess(number,resultList);
     }
 
     //获取审阅中信息
@@ -117,7 +119,9 @@ public class ContributePage {
         }
         User user = userService.getUserById(id);
         List<Map<String,Object>> resultList = contributeService.getAuditList(user.getId(),curr,limit);
-        return ServerResponse.createBySuccess("获取审核中新闻成功",resultList);
+        String number = String.valueOf(resultList.get(0).get("number"));
+        resultList.remove(resultList.get(0));
+        return ServerResponse.createBySuccess(number,resultList);
     }
 
     //获取已退回信息
@@ -144,6 +148,8 @@ public class ContributePage {
         }
         User user = userService.getUserById(id);
         List<Map<String,Object>> resultList = contributeService.getReturnList(user.getId(),curr,limit);
-        return ServerResponse.createBySuccess("获取已退回新闻成功",resultList);
+        String number = String.valueOf(resultList.get(0).get("number"));
+        resultList.remove(resultList.get(0));
+        return ServerResponse.createBySuccess(number,resultList);
     }
 }

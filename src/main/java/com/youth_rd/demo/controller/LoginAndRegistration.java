@@ -5,13 +5,14 @@ import com.youth_rd.demo.domain.User;
 import com.youth_rd.demo.service.EmailService;
 import com.youth_rd.demo.service.UserService;
 import com.youth_rd.demo.tools.JwtToken;
+import com.youth_rd.demo.tools.RedisTool;
 import com.youth_rd.demo.tools.ServerResponse;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -30,6 +31,9 @@ public class LoginAndRegistration {
 
     @Autowired
     private JwtToken jwtToken;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     //获取登录验证码
 //    @RequestMapping("/getValidCode")
@@ -62,8 +66,7 @@ public class LoginAndRegistration {
     //登录
     @ResponseBody
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public ServerResponse login(@RequestBody Map<String,String> jsonObj,
-                                HttpServletResponse response){
+    public ServerResponse login(@RequestBody Map<String,String> jsonObj){
         String email = jsonObj.get("email");
         String pwd = jsonObj.get("pwd");
         System.out.println(email+"---"+pwd);
@@ -73,18 +76,16 @@ public class LoginAndRegistration {
             return ServerResponse.createByError("用户名或密码错误");
         }
 
-        String token = jwtToken.generateToken(user.getId().longValue());
+        RedisTool.setUser(redisTemplate,"user_"+user.getId().toString(),user);
 
-        response.setHeader("Authorization",token);
+        Map<String,String> mapResult = new HashMap<>();
+        mapResult.put("id",user.getId().toString());
+        mapResult.put("img",user.getImage());
+        mapResult.put("name",user.getName());
+        mapResult.put("sex",user.getSex().toString());
+        mapResult.put("email",user.getEmail());
 
-        Map<String,String> mapresult = new HashMap<>();
-        mapresult.put("id",user.getId().toString());
-        mapresult.put("img",user.getImage());
-        mapresult.put("name",user.getName());
-        mapresult.put("sex",user.getSex().toString());
-        mapresult.put("email",user.getEmail());
-
-        return ServerResponse.createBySuccess("登录成功",mapresult);
+        return ServerResponse.createBySuccess("登录成功",mapResult);
     }
 
     //发送注册邮箱验证码
@@ -158,8 +159,7 @@ public class LoginAndRegistration {
 
     //修改密码
     @RequestMapping(value = "/updatePwd",method = RequestMethod.POST)
-    public ServerResponse updatePwd(@RequestBody Map<String,String> jsonObj,
-                                    HttpServletRequest request){
+    public ServerResponse updatePwd(@RequestBody Map<String,String> jsonObj){
         String email = jsonObj.get("email");
         String pwd = jsonObj.get("pwd");
         String rePwd = jsonObj.get("rePwd");

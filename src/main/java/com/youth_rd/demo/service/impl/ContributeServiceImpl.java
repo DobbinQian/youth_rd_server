@@ -43,9 +43,12 @@ public class ContributeServiceImpl implements ContributeService {
             newsList = newsMapper.selectPassByUserId(id);
             RedisTool.setList(redisTemplate,key,newsList);
         }
+        List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",newsList.size());
+        resultList.add(map1);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         newsList = PageTool.getDateByCL(newsList,curr,limit);
-        List<Map<String,Object>> resultList = new ArrayList<>();
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",n.getId());
@@ -68,9 +71,12 @@ public class ContributeServiceImpl implements ContributeService {
             newsList = newsMapper.selectAuditByUserId(id);
             RedisTool.setList(redisTemplate,key,newsList);
         }
+        List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",newsList.size());
+        resultList.add(map1);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         newsList = PageTool.getDateByCL(newsList,curr,limit);
-        List<Map<String,Object>> resultList = new ArrayList<>();
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",n.getId());
@@ -91,9 +97,12 @@ public class ContributeServiceImpl implements ContributeService {
             newsList = newsMapper.selectReturnByUserId(id);
             RedisTool.setList(redisTemplate,key,newsList);
         }
+        List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",newsList.size());
+        resultList.add(map1);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         newsList = PageTool.getDateByCL(newsList,curr,limit);
-        List<Map<String,Object>> resultList = new ArrayList<>();
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",n.getId());

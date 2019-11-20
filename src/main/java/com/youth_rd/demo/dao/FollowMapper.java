@@ -18,4 +18,6 @@ public interface FollowMapper {
     int insert(@Param("followId") Integer followId,@Param("followedId") Integer followedId);
     //删除follow
     int delete(@Param("followId") Integer followId,@Param("followedId") Integer followedId);
+    //查看是否有关注信息
+    User selectByFollowsId(@Param("id") Integer id,@Param("userId") Integer userId);
 }

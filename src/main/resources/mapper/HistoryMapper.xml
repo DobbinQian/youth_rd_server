@@ -12,8 +12,8 @@
     </association>
 </resultMap>
     <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" resultType="com.youth_rd.demo.domain.History">
-        SELECT
-        *
+        SELECT distinct news_id,user_id,(select Max(time)
+        FROM history h1 where user_id = #{id,jdbcType=INTEGER} And h1.news_id = h.news_id) AS time,n.id,n.title
         FROM history h
         LEFT JOIN news n on h.news_id = n.id
         WHERE h.user_id = #{id,jdbcType=INTEGER}

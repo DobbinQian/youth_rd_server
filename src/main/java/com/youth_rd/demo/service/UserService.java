@@ -31,6 +31,8 @@ public interface UserService {
     //关注/取消关注用户用户
     int followOrCancel(Integer fcId,Integer UserId,Integer Op);
 
+    boolean isFollow(Integer id,Integer userId);
+
     //获取用户浏览历史
     List<Map<String,Object>> getHistoryList(Integer curr,Integer limit,Integer id);
 

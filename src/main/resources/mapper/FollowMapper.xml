@@ -8,21 +8,26 @@
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="sex" property="sex" jdbcType="INTEGER" />
         <result column="image" property="image" jdbcType="VARCHAR" />
-        <result column="isban" property="isBan" jdbcType="INTEGER" />
+        <result column="isBan" property="isBan" jdbcType="INTEGER" />
+        <result column="isMutual" property="isMutual" jdbcType="INTEGER"/>
     </resultMap>
     <select id="selectFollowsById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        SELECT
-        *
+        SELECT u.*,(SELECT COUNT(f1.id) FROM follow f1 WHERE u.id = f1.focus_id AND #{id,jdbcType=INTEGER} = f1.focused_id) AS isMutual
         FROM user u
         LEFT JOIN follow f on u.id = f.focused_id
         WHERE f.focus_id = #{id,jdbcType=INTEGER}
     </select>
     <select id="selectFansById" resultMap="BaseResultMap">
-        SELECT
-        *
+        SELECT u.*,(SELECT COUNT(f1.id) FROM follow f1 WHERE u.id = f1.focused_id AND #{id,jdbcType=INTEGER} = f1.focus_id) AS isMutual
         FROM user u
         LEFT JOIN follow f on u.id = f.focus_id
-        WHERE f.focus_id = #{id,jdbcType=INTEGER}
+        WHERE f.focused_id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByFollowsId" resultMap="BaseResultMap">
+        SELECT *
+        FROM user u
+        LEFT JOIN follow f on u.id = f.focused_id
+        WHERE f.focus_id = #{userId,jdbcType=INTEGER} AND f.focused_id = #{id,jdbcType=INTEGER}
     </select>
     <insert id="insert">
         INSERT INTO follow (focus_id,focused_id)

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -77,13 +78,17 @@ public class UserServiceImpl implements UserService {
             userList = followMapper.selectFollowsById(id);
             RedisTool.setList(redisTemplate,key,userList);
         }
-        userList = PageTool.getDateByCL(userList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",userList.size());
+        resultList.add(map1);
+        userList = PageTool.getDateByCL(userList,curr,limit);
         for (User user:userList) {
             Map<String,Object> map = new HashMap<>();
             map.put("id",user.getId());
             map.put("name",user.getName());
             map.put("img",user.getImage());
+            map.put("isMutual",user.getIsMutual());
             resultList.add(map);
         }
         return resultList;
@@ -99,13 +104,17 @@ public class UserServiceImpl implements UserService {
             userList = followMapper.selectFansById(id);
             RedisTool.setList(redisTemplate,key,userList);
         }
-        userList = PageTool.getDateByCL(userList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",userList.size());
+        resultList.add(map1);
+        userList = PageTool.getDateByCL(userList,curr,limit);
         for (User user:userList) {
             Map<String,Object> map = new HashMap<>();
             map.put("id",user.getId());
             map.put("name",user.getName());
             map.put("img",user.getImage());
+            map.put("isMutual",user.getIsMutual());
             resultList.add(map);
         }
         return resultList;
@@ -115,9 +124,9 @@ public class UserServiceImpl implements UserService {
     public int followOrCancel(Integer fcId, Integer userId, Integer op) {
         int result = 0;
         if(op>0){
-            result = followMapper.insert(fcId,userId);
+            result = followMapper.insert(userId,fcId);
         }else{
-            result = followMapper.delete(fcId,userId);
+            result = followMapper.delete(userId,fcId);
         }
         return result;
     }
@@ -133,17 +142,17 @@ public class UserServiceImpl implements UserService {
             historyList = historyMapper.selectByUserId(id);
             RedisTool.setList(redisTemplate,key,historyList);
         }
-
-        //分页处理
-        historyList = PageTool.getDateByCL(historyList,curr,limit);
-
-        //再组装
         List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",historyList.size());
+        resultList.add(map1);
+        historyList = PageTool.getDateByCL(historyList,curr,limit);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (History h:historyList) {
             Map<String,Object> map = new HashMap<>();
             map.put("id",h.getNewsId());
             map.put("title",h.getNews().getTitle());
-            map.put("date",h.getTime());
+            map.put("date",formatter.format(h.getTime()));
             resultList.add(map);
         }
 
@@ -154,6 +163,14 @@ public class UserServiceImpl implements UserService {
     public int updateUserData(User user) {
         int result = userMapper.updateByUser(user);
         return result;
+    }
+
+    public boolean isFollow(Integer id,Integer userId){
+        User user = followMapper.selectByFollowsId(id,userId);
+        if(user==null){
+            return false;
+        }
+        return true;
     }
 
     @Override

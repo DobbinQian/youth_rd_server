@@ -21,6 +21,8 @@ public class User implements Serializable {
 
     private Date registerDate;
 
+    private Integer isMutual;
+
     public Integer getId() {
         return id;
     }
@@ -83,5 +85,13 @@ public class User implements Serializable {
 
     public void setRegisterDate(Date registerDate) {
         this.registerDate = registerDate;
+    }
+
+    public Integer getIsMutual() {
+        return isMutual;
+    }
+
+    public void setIsMutual(Integer isMutual) {
+        this.isMutual = isMutual;
     }
 }
