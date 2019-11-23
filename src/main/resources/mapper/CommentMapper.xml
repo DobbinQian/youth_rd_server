@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.youth_rd.demo.dao.CommentMapper" >
+    <resultMap id="UserResultMap" type="com.youth_rd.demo.domain.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="INTEGER" />
+        <result column="image" property="image" jdbcType="VARCHAR" />
+        <result column="isBan" property="isBan" jdbcType="INTEGER" />
+        <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
+    </resultMap>
     <resultMap id="BaseResultMap" type="com.youth_rd.demo.domain.Comment" >
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="news_id" property="newsId" jdbcType="INTEGER" />
@@ -8,11 +17,39 @@
         <result column="time" property="time" jdbcType="TIMESTAMP" />
         <result column="reply_id" property="replyId" jdbcType="INTEGER" />
         <result column="content" property="content" jdbcType="VARCHAR" />
+        <association property="user" javaType="com.youth_rd.demo.domain.User" column="send_user_id" select="selectUserBySendId">
+            <id column="id" property="id" jdbcType="INTEGER" />
+            <result column="email" property="email" jdbcType="VARCHAR" />
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="sex" property="sex" jdbcType="INTEGER" />
+            <result column="image" property="image" jdbcType="VARCHAR" />
+            <result column="isBan" property="isBan" jdbcType="INTEGER" />
+            <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
+        </association>
+        <association property="replyUser" javaType="com.youth_rd.demo.domain.User" column="reply_user_id" select="selectUserByReplyId">
+            <id column="id" property="id" jdbcType="INTEGER" />
+            <result column="email" property="email" jdbcType="VARCHAR" />
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="sex" property="sex" jdbcType="INTEGER" />
+            <result column="image" property="image" jdbcType="VARCHAR" />
+            <result column="isBan" property="isBan" jdbcType="INTEGER" />
+            <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
+        </association>
     </resultMap>
-    <select id="selectByNewsId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <select id="selectUserBySendId" resultMap="UserResultMap">
         SELECT *
-        FROM comment
-        WHERE news_id = #{id,jdbcType=INTEGER}
+        FROM user
+        WHERE id = #{send_user_id,jdbcType=INTEGER}
+    </select>
+    <select id="selectUserByReplyId" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE id = #{reply_user_id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByNewsId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        SELECT c.id,c.reply_id,c.news_id,c.time,c.content,c.user_id AS send_user_id,(SELECT c1.user_id FROM comment c1 WHERE c1.id = c.reply_id) AS reply_user_id
+        FROM comment c
+        WHERE c.news_id = #{id,jdbcType=INTEGER}
     </select>
     <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         SELECT *

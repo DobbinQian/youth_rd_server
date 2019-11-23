@@ -3,15 +3,13 @@ package com.youth_rd.demo.service.impl;
 import com.youth_rd.demo.dao.CommentMapper;
 import com.youth_rd.demo.domain.Comment;
 import com.youth_rd.demo.service.CommentService;
-import com.youth_rd.demo.tools.CommentListFormat;
 import com.youth_rd.demo.tools.RedisTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -29,27 +27,72 @@ public class CommentServiceImpl implements CommentService {
             commentList = commentMapper.selectByNewsId(id);
             RedisTool.setList(redisTemplate,key,commentList);
         }
-        List<Map<String,Object>> resultList;
-        resultList = CommentListFormat.format(commentList,null);
-
-
-
-
-
-
-
-
-
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        List<Map<String,Object>> resultList = new ArrayList<>();
-//        for(Comment c:commentList){
-//            Map<String,Object> map = new HashMap<>();
-//            map.put("id",c.getId());
-//            map.put("cid",c.getReplyId());
-//            map.put("content",c.getContent());
-//            map.put("date",formatter.format(c.getTime()));
-//            resultList.add(map);
+        List<Map<String,Object>> resultList = new ArrayList<>();
+//
+//        for(Comment c : commentList){
+//            System.out.println(c.getId());
+//            if(c.getUser()==null){
+//                System.out.println("为空null");
+//            }else{
+//                System.out.println(c.getUser().getName());
+//            }
+//            if(c.getReplyUser()==null){
+//                System.out.println("为空null");
+//            }else{
+//                System.out.println(c.getReplyUser().getName());
+//            }
 //        }
+        //resultList = CommentListFormat.format(commentList,null);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Iterator<Comment> it = commentList.iterator();
+        while (it.hasNext()){
+            Map<String,Object> map = new HashMap<>();
+            Comment c = it.next();
+            if(c.getReplyId()==null){
+                Map<String,Object> userMap = new HashMap<>();
+                userMap.put("id",c.getUser().getId());
+                userMap.put("name",c.getUser().getName());
+                userMap.put("img",c.getUser().getImage());
+                map.put("user",userMap);
+                map.put("id",c.getId());
+                map.put("cid",c.getReplyId());
+                map.put("content",c.getContent());
+                map.put("date",formatter.format(c.getTime()));
+                resultList.add(map);
+                it.remove();
+            }
+        }
+        for(Map<String,Object> m : resultList){
+            List<Integer> replyId = new ArrayList<>();
+            replyId.add((Integer) m.get("id"));
+            it = commentList.iterator();
+            List<Map<String,Object>> replyList = new ArrayList<>();
+            while (it.hasNext()){
+                Map<String,Object> map = new HashMap<>();
+                Comment c = it.next();
+                if(replyId.contains(c.getReplyId())){
+                    Map<String,Object> userMap = new HashMap<>();
+                    userMap.put("id",c.getUser().getId());
+                    userMap.put("name",c.getUser().getName());
+                    userMap.put("img",c.getUser().getImage());
+                    map.put("user",userMap);
+                    Map<String,Object> replyMap = new HashMap<>();
+                    replyMap.put("id",c.getReplyUser().getId());
+                    replyMap.put("name",c.getReplyUser().getName());
+                    map.put("replyUser",replyMap);
+                    map.put("id",c.getId());
+                    map.put("cid",c.getReplyId());
+                    map.put("replyId",c.getReplyId());
+                    map.put("content",c.getContent());
+                    map.put("date",formatter.format(c.getTime()));
+                    replyId.add(c.getId());
+                    replyList.add(map);
+                    it.remove();
+                }
+            }
+            m.put("reply",replyList);
+        }
+
         return resultList;
     }
 
