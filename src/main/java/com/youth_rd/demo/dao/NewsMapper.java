@@ -16,6 +16,9 @@ public interface NewsMapper {
     //通过Id获得新闻信息
     News selectById(Integer id);
 
+    //通过ID获取被退回的新闻
+    News selectReturnContentById(@Param("userId") Integer userId,@Param("newsId") Integer newsId);
+
     //获取指定用户的以通过审核的稿件列表
     List<News> selectPassByUserId(Integer id);
 
@@ -77,5 +80,8 @@ public interface NewsMapper {
     int updateTopLine(@Param("id") Integer id,@Param("topImg") String topImg,@Param("queue") Integer queue);
     //删除或恢复新闻
     int updateIsDelete(@Param("id") Integer id,@Param("op") Integer op);
+
+    //更新投稿
+    int updateAllById(News news);
 }
 

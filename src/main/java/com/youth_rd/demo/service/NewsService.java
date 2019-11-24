@@ -31,4 +31,7 @@ public interface NewsService {
     //通过文章Id获取相关推荐列表
     List<Map<String,Object>> getRecommendListById(Integer id);
 
+    //通过ID获取已退回的文章详情
+    Map<String,Object> getReturnContentById(Integer userId,Integer newsId);
+
 }

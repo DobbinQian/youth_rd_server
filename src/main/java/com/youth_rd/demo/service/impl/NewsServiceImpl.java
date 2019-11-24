@@ -287,4 +287,24 @@ public class NewsServiceImpl implements NewsService {
 
         return getNewsList(1,10);
     }
+
+    @Override
+    public Map<String, Object> getReturnContentById(Integer userId, Integer newsId) {
+        News news = newsMapper.selectReturnContentById(userId,newsId);
+        if(news==null){
+            return null;
+        }else{
+            Map<String,Object> resultMap = new HashMap<>();
+            resultMap.put("id",news.getId());
+            resultMap.put("title",news.getTitle());
+            resultMap.put("img",news.getImage());
+            resultMap.put("classId",news.getClassId());
+            resultMap.put("plateId",news.getPlate().getId());
+            resultMap.put("authorId",news.getAuthorId());
+            resultMap.put("authorName",news.getAuthor().getName());
+            resultMap.put("date",formatter.format(news.getTime()));
+            resultMap.put("content",news.getContent());
+            return resultMap;
+        }
+    }
 }

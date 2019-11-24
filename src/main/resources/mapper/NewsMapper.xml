@@ -105,6 +105,16 @@
         </trim>
     </insert>
     <select id="selectById" resultMap="BaseResultMap">
+        SELECT n.*,u.name,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
+        (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
+        (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
+        FROM news n
+        LEFT JOIN user u ON u.id = n.author_id
+        LEFT JOIN class c ON c.id = n.class_id
+        LEFT JOIN plate p ON p.id = c.plate_id
+        WHERE n.id = #{id,jdbcType=INTEGER} AND tag > 0
+    </select>
+    <select id="selectReturnContentById" resultMap="BaseResultMap">
         SELECT n.id,n.author_id,n.title,n.image,n.time,u.id,n.content,u.name,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
         (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
         (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
@@ -112,7 +122,7 @@
         LEFT JOIN user u ON u.id = n.author_id
         LEFT JOIN class c ON c.id = n.class_id
         LEFT JOIN plate p ON p.id = c.plate_id
-        WHERE n.id = #{id,jdbcType=INTEGER}
+        WHERE n.id = #{newsId,jdbcType=INTEGER} AND tag = -1 AND n.author_id = #{userId,jdbcType=INTEGER}
     </select>
     <select id="selectPassByUserId" resultMap="BaseResultMap">
         SELECT n.*,(SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
@@ -257,6 +267,37 @@
     </update>
     <update id="updateIsDelete">
         UPDATE news SET idDelete = #{op,jdbcType=INTEGER}
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateAllById" parameterType="com.youth_rd.demo.domain.News">
+        UPDATE news SET
+        <if test="classId != null" >
+            class_id = #{classId,jdbcType=INTEGER}
+        </if>
+        <if test="title != null" >
+            ,title=#{title,jdbcType=VARCHAR}
+        </if>
+        <if test="image != null" >
+            ,image=#{image,jdbcType=VARCHAR}
+        </if>
+        <if test="topImg != null" >
+            ,topImg=#{topImg,jdbcType=VARCHAR}
+        </if>
+        <if test="content != null" >
+            ,content=#{content,jdbcType=VARCHAR}
+        </if>
+        <if test="time != null" >
+            ,time=#{time,jdbcType=TIMESTAMP}
+        </if>
+        <if test="isDelete != null" >
+            ,isDelete=#{isDelete,jdbcType=INTEGER}
+        </if>
+        <if test="tag != null" >
+            ,tag=#{tag,jdbcType=INTEGER}
+        </if>
+        <if test="auditContent != null" >
+            ,auditContent=#{auditContent,jdbcType=VARCHAR}
+        </if>
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
 </mapper>

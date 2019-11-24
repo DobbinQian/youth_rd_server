@@ -34,6 +34,18 @@ public class ContributeServiceImpl implements ContributeService {
     }
 
     @Override
+    public int reContribute(Integer id, String title, String img, Integer userId, Integer classId, String content,News oldNews) {
+        oldNews.setTitle(title);
+        oldNews.setClassId(classId);
+        oldNews.setContent(content);
+        oldNews.setImage(img);
+        oldNews.setTime(new Date());
+        oldNews.setIsDelete(0);
+        oldNews.setTag(0);
+        return newsMapper.updateAllById(oldNews);
+    }
+
+    @Override
     public List<Map<String, Object>> getContributeList(Integer id,Integer curr,Integer limit) {
         String key = "CL"+id;
         List<News> newsList;
