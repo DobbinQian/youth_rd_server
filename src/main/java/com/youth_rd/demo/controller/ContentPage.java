@@ -107,7 +107,7 @@ public class ContentPage {
         if(!newsService.newsIsExistById(Integer.valueOf(id))){
             return ServerResponse.createByError("指定新闻不存在");
         }
-        int result=0;
+        Map<String,Object> result;
         User user = userService.getUserById(Integer.valueOf(userId));
         if(user==null){
             return ServerResponse.createByError("指定用户不存在");
@@ -120,7 +120,7 @@ public class ContentPage {
         }else{
             result = commentService.commentByNewsId(Integer.valueOf(id),user.getId(),content);
         }
-        if(result==0){
+        if(result==null){
             return ServerResponse.createByError("数据库异常，评论失败");
         }
         return ServerResponse.createByCheckSuccess();

@@ -124,6 +124,22 @@
         LEFT JOIN plate p ON p.id = c.plate_id
         WHERE n.id = #{newsId,jdbcType=INTEGER} AND tag = -1 AND n.author_id = #{userId,jdbcType=INTEGER}
     </select>
+    <select id="selectAllByIPCTTU" resultMap="BaseResultMap">
+        SELECT n.*,u.name,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
+        (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
+        (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
+        FROM news n
+        LEFT JOIN user u ON u.id = n.author_id
+        LEFT JOIN class c ON c.id = n.class_id
+        LEFT JOIN plate p ON p.id = c.plate_id
+        WHERE
+        <if test="id!=null">n.id = #{id,jdbcType=INTEGER}</if>
+        <if test="plateId!=null"><if test="id!=null">AND </if>p.id = #{plateId,jdbcType=INTEGER}</if>
+        <if test="classId!=null"><if test="id!=null or plate!=null">AND </if>c.id = #{classId,jdbcType=INTEGER}</if>
+        <if test="tag!=null"><if test="id!=null or plateId!=null or classId!=null">AND </if>n.tag = #{tag,jdbcType=INTEGER}</if>
+        <if test="title!=null"><if test="id!=null or plateId!=null or classId!=null or tag!=null">AND </if>n.title LIKE '%${title}%'</if>
+        <if test="userId!=null"><if test="id!=null or plateId!=null or classId!=null or tag!=null or userId!=null">AND </if>n.author_id = #{userId,jdbcType=INTEGER}</if>
+    </select>
     <select id="selectPassByUserId" resultMap="BaseResultMap">
         SELECT n.*,(SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
         (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
@@ -247,7 +263,7 @@
     </select>
 
     <update id="updateTagById">
-        UPDATE news SET tag = #{tag,jdbcType=INTEGER},content = #{content,jdbcType=VARCHAR}
+        UPDATE news SET tag = #{tag,jdbcType=INTEGER},auditContent = #{content,jdbcType=VARCHAR}
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
 

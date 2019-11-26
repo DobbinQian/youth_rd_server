@@ -186,7 +186,11 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Map<String, Object> getNewsContentById(Integer id) {
         //TODO 做缓存
-        News news = newsMapper.selectById(id);
+        List<News> newsList = newsMapper.selectAllByIPCTTU(id,null,null,null,null,null);
+        if(newsList.size()==0){
+            return null;
+        }
+        News news = newsList.get(0);
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("id",news.getId());
         resultMap.put("title",news.getTitle());

@@ -13,6 +13,14 @@ public interface NewsMapper {
     //添加新闻
     int insert(News record);
 
+    //通过id、plateId、classId、tag、title、userId查询新闻
+    List<News> selectAllByIPCTTU(@Param("id") Integer id,
+                                 @Param("plateId") Integer plateId,
+                                 @Param("classId") Integer classId,
+                                 @Param("tag") Integer tag,
+                                 @Param("title") String title,
+                                 @Param("userId") Integer userId);
+
     //通过Id获得新闻信息
     News selectById(Integer id);
 

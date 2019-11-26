@@ -11,8 +11,8 @@ public interface CommentService {
     boolean commentIsExistById(Integer id);
 
     //在指定文章中评论
-    int commentByNewsId(Integer newsId,Integer userId,String content);
+    Map<String,Object> commentByNewsId(Integer newsId,Integer userId,String content);
 
     //在指定文章中评论指定评论
-    int commentByNewsIdAndCId(Integer newsId,Integer userId,Integer commentId,String content);
+    Map<String,Object> commentByNewsIdAndCId(Integer newsId,Integer userId,Integer commentId,String content);
 }

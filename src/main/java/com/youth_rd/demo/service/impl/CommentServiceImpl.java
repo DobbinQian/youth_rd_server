@@ -103,23 +103,40 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public int commentByNewsId(Integer newsId, Integer userId, String content) {
+    public Map<String,Object> commentByNewsId(Integer newsId, Integer userId, String content) {
+        Map<String,Object> resultMap = new HashMap<>();
         Comment comment = new Comment();
         comment.setNewsId(newsId);
+        resultMap.put("newsId",comment.getNewsId());
         comment.setUserId(userId);
+        resultMap.put("userId",comment.getUserId());
         comment.setContent(content);
+        resultMap.put("content",comment.getContent());
         comment.setTime(new Date());
-        return commentMapper.insert(comment);
+        resultMap.put("time",comment.getTime());
+        if(commentMapper.insert(comment)==0){
+            return null;
+        }
+        return resultMap;
     }
 
     @Override
-    public int commentByNewsIdAndCId(Integer newsId, Integer userId, Integer commentId, String content) {
+    public Map<String,Object> commentByNewsIdAndCId(Integer newsId, Integer userId, Integer commentId, String content) {
+        Map<String,Object> resultMap = new HashMap<>();
         Comment comment = new Comment();
         comment.setNewsId(newsId);
+        resultMap.put("newsId",comment.getNewsId());
         comment.setUserId(userId);
+        resultMap.put("userId",comment.getUserId());
         comment.setContent(content);
+        resultMap.put("content",comment.getContent());
         comment.setReplyId(commentId);
+        resultMap.put("cid",comment.getReplyId());
         comment.setTime(new Date());
-        return commentMapper.insert(comment);
+        resultMap.put("time",comment.getTime());
+        if(commentMapper.insert(comment)==0){
+            return null;
+        }
+        return resultMap;
     }
 }

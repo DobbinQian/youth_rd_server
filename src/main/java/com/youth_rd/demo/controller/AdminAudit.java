@@ -22,12 +22,15 @@ public class AdminAudit {
     public ServerResponse getAuditList(@RequestParam("curr") Integer curr,
                                        @RequestParam("limit") Integer limit){
         List<Map<String,Object>> resultList = newsManageService.getAllAuditList(curr,limit);
-        return ServerResponse.createBySuccess("获取所有审核新闻成功",resultList);
+        String number = String.valueOf(resultList.get(0).get("number"));
+        resultList.remove(resultList.get(0));
+        return ServerResponse.createBySuccess(number,resultList);
     }
 
     //获取审阅详情
     @RequestMapping("/adm/getAuditContent")
     public ServerResponse getAuditContent(@RequestParam("id") Integer id){
+        System.out.println(id);
         Map<String,Object> resultMap = newsService.getNewsContentById(id);
         return ServerResponse.createBySuccess("获取文章内容成功",resultMap);
     }
@@ -35,10 +38,23 @@ public class AdminAudit {
     //提交审核结果
     @RequestMapping(value = "/adm/submitAuditResult",method = RequestMethod.POST)
     public ServerResponse submitAuditResult(@RequestBody Map<String,String> jsonObj){
-        Integer id = Integer.valueOf(jsonObj.get("id"));
-        Integer op = Integer.valueOf(jsonObj.get("op"));
+        String id = jsonObj.get("id");
+        String op = jsonObj.get("op");
         String content = jsonObj.get("content");
-        int result = newsManageService.audit(id, op, content);
+        String errStr = "";
+        if(id==null){
+            errStr+="id为空 ";
+        }
+        if(op==null){
+            errStr+="op为空 ";
+        }
+        if(content==null){
+            errStr+="content为空 ";
+        }
+        if(errStr.length()>0){
+            return ServerResponse.createByError(errStr);
+        }
+        int result = newsManageService.audit(Integer.valueOf(id), Integer.valueOf(op), content);
         if(result==0){
             return ServerResponse.createByError("数据库异常，操作失败");
         }

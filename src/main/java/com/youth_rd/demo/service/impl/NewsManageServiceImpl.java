@@ -32,6 +32,9 @@ public class NewsManageServiceImpl implements NewsManageService {
         }
         newsList = PageTool.getDateByCL(newsList,curr,limit);
         List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",newsList.size());
+        resultList.add(map1);
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",n.getId());
