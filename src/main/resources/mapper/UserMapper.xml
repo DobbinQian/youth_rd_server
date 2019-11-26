@@ -106,15 +106,15 @@
     <select id="selectAllByENI" resultMap="BaseResultMap">
         select *
         from user
-        where
+        <if test="email!=null or name!=null or id!=null">where</if>
         <if test="email != null" >
-            email = #{email,jdbcType=VARCHAR}
+            email LIKE '%${email}%'
         </if>
-        <if test="email != null" >
-            AND name = #{name,jdbcType=VARCHAR}
+        <if test="name != null" >
+            <if test="email != null">AND</if> name LIKE '%${name}%'
         </if>
-        <if test="email != null" >
-            AND id = #{id,jdbcType=INTEGER}
+        <if test="id != null" >
+            <if test="email != null or name != null">AND</if> id = #{id,jdbcType=INTEGER}
         </if>
     </select>
 
