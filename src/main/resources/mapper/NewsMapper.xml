@@ -318,10 +318,15 @@
     </update>
     <update id="updateTopLineList" parameterType="java.util.List">
         UPDATE news SET tag = 1
-        WHERE tag>1 ;
-        <foreach item="newsId" index="index" collection="obj" open="" close="" separator=";">
-            UPDATE news SET tag = #{index}+2
-            WHERE id = #{newsId}
+        WHERE tag > 1 ;
+        <foreach item="item" index="index" collection="obj" open="" close="" separator=";">
+            UPDATE news
+            <set>
+                tag = #{index}+2
+            </set>
+            <where>
+                id = #{item}
+            </where>
         </foreach>
     </update>
 </mapper>
