@@ -19,7 +19,7 @@ public interface NewsMapper {
                                  @Param("classId") Integer classId,
                                  @Param("tag") Integer tag,
                                  @Param("title") String title,
-                                 @Param("userId") Integer userId);
+                                 @Param("username") String username);
 
     //通过Id获得新闻信息
     News selectById(Integer id);
@@ -83,7 +83,7 @@ public interface NewsMapper {
     //获取头条列表
     List<News> selectTopLine();
     //修改头条列表
-    int updateTopLineList(List<Integer> obj);
+    int updateTopLineList(@Param("obj") List<Integer> obj);
     //设置头条
     int updateTopLine(@Param("id") Integer id,@Param("topImg") String topImg,@Param("queue") Integer queue);
     //删除或恢复新闻

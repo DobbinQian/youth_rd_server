@@ -123,7 +123,7 @@ public class ContentPage {
         if(result==null){
             return ServerResponse.createByError("数据库异常，评论失败");
         }
-        return ServerResponse.createByCheckSuccess();
+        return ServerResponse.createBySuccess("评论成功",result);
     }
 
     //反馈投诉

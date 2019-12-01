@@ -11,7 +11,7 @@ public interface NewsManageService {
     int audit(Integer id,Integer op,String content);
 
     //获取所有通过和被删除的稿件
-    List<Map<String,Object>> admGetNewsList(Integer id,String title,Integer curr,Integer limit);
+    List<Map<String,Object>> admGetNewsList(Integer id,Integer plateId,Integer classId, String title,Integer tag,String username, Integer curr, Integer limit);
 
     //返回头条数量
     int sumOfTop();

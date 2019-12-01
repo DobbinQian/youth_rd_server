@@ -16,12 +16,54 @@ public class AdminManageNews {
 
     //获取稿件列表
     @RequestMapping("/adm/getContributeList")
-    public ServerResponse getContributeList(@RequestParam("id") Integer id,
-                                            @RequestParam("title") String title,
-                                            @RequestParam("curr") Integer curr,
-                                            @RequestParam("limit") Integer limit){
-        List<Map<String,Object>> resultList = newsManageService.admGetNewsList(id, title, curr, limit);
-        return ServerResponse.createBySuccess("获取稿件列表成功",resultList);
+    public ServerResponse getContributeList(@RequestBody Map<String,String> jsonObj){
+        String plateId = jsonObj.get("plateId");
+        String classId = jsonObj.get("classId");
+        String tag = jsonObj.get("tag");
+        String title = jsonObj.get("title");
+        String username = jsonObj.get("username");
+        String newsId = jsonObj.get("newsId");
+        String curr = jsonObj.get("curr");
+        String limit = jsonObj.get("limit");
+        String errStr = "";
+        Integer plateIdInt;
+        if(plateId==null||plateId.equals("")){
+            plateIdInt = null;
+        }else{
+            plateIdInt = Integer.valueOf(plateId);
+        }
+        Integer classIdInt;
+        if(classId==null||classId.equals("")){
+            classIdInt = null;
+        }else{
+            classIdInt = Integer.valueOf(classId);
+        }
+        Integer tagInt;
+        if(tag==null||tag.equals("")){
+            tagInt = null;
+        }else{
+            tagInt = Integer.valueOf(tag);
+        }
+        Integer newsIdInt;
+        if(newsId==null||newsId.equals("")){
+            newsIdInt = null;
+        }else{
+            newsIdInt = Integer.valueOf(newsId);
+        }
+        if(curr==null){
+            errStr+="curr为空 ";
+        }
+        if(limit==null){
+            errStr+="limit为空 ";
+        }
+        if(errStr.length()>0){
+            return ServerResponse.createByError(errStr);
+        }
+        List<Map<String,Object>> resultList = newsManageService.admGetNewsList(newsIdInt,
+                plateIdInt,classIdInt, title,tagInt,username, Integer.valueOf(curr), Integer.valueOf(limit));
+        String number = String.valueOf(resultList.get(0).get("number"));
+        resultList.remove(resultList.get(0));
+        return ServerResponse.createBySuccess(number,resultList);
     }
 
     //设置某稿件为头条
@@ -45,6 +87,7 @@ public class AdminManageNews {
     public ServerResponse deleteOrRecoverNews(@RequestBody Map<String,String> jsonObj){
         Integer id = Integer.valueOf(jsonObj.get("id"));
         Integer op = Integer.valueOf(jsonObj.get("op"));
+        System.out.println("/adm/deleteOrRecoverNews");
         int result = newsManageService.deleteOrRecover(id, op);
         if(result==0){
             return ServerResponse.createByError("数据库异常，操作失败");
@@ -62,7 +105,11 @@ public class AdminManageNews {
     //编辑头条
     //TODO 未完成
     @RequestMapping(value = "/adm/editTopLine",method = RequestMethod.POST)
-    public ServerResponse editTopLine(@RequestBody List<Integer> obj){
+    public ServerResponse editTopLine(@RequestBody Map<String,List<Integer>> jsonObj){
+        List<Integer> obj = jsonObj.get("data");
+        if(obj.size()>5){
+            return ServerResponse.createByError("头条数量不符合要求");
+        }
         int result = newsManageService.editTopLine(obj);
         if(result==0){
             return ServerResponse.createByError("数据库异常，操作失败");

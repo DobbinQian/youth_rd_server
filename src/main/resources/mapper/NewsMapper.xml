@@ -132,13 +132,13 @@
         LEFT JOIN user u ON u.id = n.author_id
         LEFT JOIN class c ON c.id = n.class_id
         LEFT JOIN plate p ON p.id = c.plate_id
-        WHERE
+        <if test="id!=null or plateId!=null or classId!=null or tag!=null or title!=null or username!=null">WHERE</if>
         <if test="id!=null">n.id = #{id,jdbcType=INTEGER}</if>
         <if test="plateId!=null"><if test="id!=null">AND </if>p.id = #{plateId,jdbcType=INTEGER}</if>
-        <if test="classId!=null"><if test="id!=null or plate!=null">AND </if>c.id = #{classId,jdbcType=INTEGER}</if>
+        <if test="classId!=null"><if test="id!=null or plateId!=null">AND </if>c.id = #{classId,jdbcType=INTEGER}</if>
         <if test="tag!=null"><if test="id!=null or plateId!=null or classId!=null">AND </if>n.tag = #{tag,jdbcType=INTEGER}</if>
         <if test="title!=null"><if test="id!=null or plateId!=null or classId!=null or tag!=null">AND </if>n.title LIKE '%${title}%'</if>
-        <if test="userId!=null"><if test="id!=null or plateId!=null or classId!=null or tag!=null or userId!=null">AND </if>n.author_id = #{userId,jdbcType=INTEGER}</if>
+        <if test="username!=null"><if test="id!=null or plateId!=null or classId!=null or tag!=null or title!=null">AND </if>u.name LIKE '%${username}%'</if>
     </select>
     <select id="selectPassByUserId" resultMap="BaseResultMap">
         SELECT n.*,(SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
@@ -267,8 +267,8 @@
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
 
-    <select id="selectTopSum">
-        SELECT COUNT(id) FROM news
+    <select id="selectTopSum" resultType="INTEGER">
+        SELECT COUNT(id) AS sum FROM news
         WHERE tag > 1
     </select>
 
@@ -282,7 +282,7 @@
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
     <update id="updateIsDelete">
-        UPDATE news SET idDelete = #{op,jdbcType=INTEGER}
+        UPDATE news SET isDelete = #{op,jdbcType=INTEGER}
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
     <update id="updateAllById" parameterType="com.youth_rd.demo.domain.News">
@@ -315,5 +315,13 @@
             ,auditContent=#{auditContent,jdbcType=VARCHAR}
         </if>
         WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateTopLineList" parameterType="java.util.List">
+        UPDATE news SET tag = 1
+        WHERE tag>1 ;
+        <foreach item="newsId" index="index" collection="obj" open="" close="" separator=";">
+            UPDATE news SET tag = #{index}+2
+            WHERE id = #{newsId}
+        </foreach>
     </update>
 </mapper>

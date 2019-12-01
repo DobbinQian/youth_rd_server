@@ -71,8 +71,11 @@ public class AdminLogin {
             return ServerResponse.createByError(errStr);
         }
 
+        System.out.println(username+":"+pwd);
         User user = userService.getUserByEmailAndPwd(username,pwd);
-
+        if(user==null){
+            return ServerResponse.createByError("账号或密码错误");
+        }
         if(!powerService.isExistByUserId(user.getId())){
             return ServerResponse.createByError("权限不足");
         }
