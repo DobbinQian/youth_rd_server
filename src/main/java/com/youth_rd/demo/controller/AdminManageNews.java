@@ -103,7 +103,6 @@ public class AdminManageNews {
     }
 
     //编辑头条
-    //TODO 未完成
     @RequestMapping(value = "/adm/editTopLine",method = RequestMethod.POST)
     public ServerResponse editTopLine(@RequestBody Map<String,List<Integer>> jsonObj){
         List<Integer> obj = jsonObj.get("data");

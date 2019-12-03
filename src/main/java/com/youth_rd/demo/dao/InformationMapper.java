@@ -13,4 +13,7 @@ public interface InformationMapper {
     List<Information> selectByAdm();
     //增加信息
     int insert(Information information);
+
+    //修改已恢复状态
+    int updateIsReply(Integer id);
 }

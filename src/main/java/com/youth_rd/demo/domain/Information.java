@@ -16,6 +16,10 @@ public class Information implements Serializable {
 
     private Integer isReply;
 
+    private User sendUser;
+
+    private User replyUser;
+
     public Integer getId() {
         return id;
     }
@@ -62,5 +66,21 @@ public class Information implements Serializable {
 
     public void setIsReply(Integer isReply) {
         this.isReply = isReply;
+    }
+
+    public User getSendUser() {
+        return sendUser;
+    }
+
+    public void setSendUser(User sendUser) {
+        this.sendUser = sendUser;
+    }
+
+    public User getReplyUser() {
+        return replyUser;
+    }
+
+    public void setReplyUser(User replyUser) {
+        this.replyUser = replyUser;
     }
 }

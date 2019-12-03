@@ -32,6 +32,7 @@ public class OverviewPage {
     public ServerResponse getNewsByClass(@RequestParam("id") Integer id,
                                          @RequestParam("curr") Integer curr,
                                          @RequestParam("limit") Integer limit){
+        System.out.println(id+"-"+curr+"-"+limit);
         if(id==0){
             //TODO 做缓存
             List<Map<String,Object>> resultList = newsService.getNewsList(curr,limit);

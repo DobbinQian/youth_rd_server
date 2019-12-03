@@ -12,5 +12,5 @@ public interface InformationService {
     int feedbackByNewsId(Integer newsId,Integer userId,String content);
 
     //管理员回复指定投诉信息
-    int replyFeedbackById(Integer userId,Integer admId,String content);
+    int replyFeedbackById(Integer infoId,Integer userId,Integer admId,String content);
 }

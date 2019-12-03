@@ -186,7 +186,7 @@
         LEFT JOIN user u ON u.id = n.author_id
         LEFT JOIN class c ON c.id = n.class_id
         LEFT JOIN plate p ON p.id = c.plate_id
-        WHERE n.tag = 1 AND n.class_id in (SELECT class_id FROM plate WHERE id = #{id,jdbcType=INTEGER})
+        WHERE n.tag = 1 AND n.class_id in (SELECT id FROM class WHERE plate_id = #{id,jdbcType=INTEGER})
         ORDER BY n.time
     </select>
     <select id="selectByClassId" resultMap="BaseResultMap">
@@ -276,6 +276,7 @@
         SELECT *
         FROM news
         WHERE tag > 1
+        ORDER BY tag
     </select>
     <update id="updateTopLine">
         UPDATE news SET topImg = #{topImg,jdbcType=VARCHAR},tag = #{queue,jdbcType=INTEGER}

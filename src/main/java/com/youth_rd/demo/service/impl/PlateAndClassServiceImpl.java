@@ -119,22 +119,25 @@ public class PlateAndClassServiceImpl implements PlateAndClassService {
     public List<Map<String, Object>> getAllPacToAdm() {
         String key = "PlatesAndClasses";
         List<Plate> plateList;
-        if(RedisTool.hasKey(redisTemplate,key)){
-            plateList = RedisTool.getList(redisTemplate,key);
-        }else{
-            plateList = plateMapper.selectAll();
-            RedisTool.setList(redisTemplate,key,plateList);
-        }
+//        if(RedisTool.hasKey(redisTemplate,key)){
+//            plateList = RedisTool.getList(redisTemplate,key);
+//        }else{
+//            plateList = plateMapper.selectAll();
+//            RedisTool.setList(redisTemplate,key,plateList);
+//        }
+        plateList = plateMapper.selectAll();
         List<Map<String,Object>> resultList = new ArrayList<>();
         for(Plate p:plateList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",p.getId());
             map.put("name",p.getName());
+            map.put("isDelete",p.getIsDelete());
             List<Map<String,Object>> mapsList = new ArrayList<>();
             for(Class c:p.getClasses()){
                 Map<String,Object> map1 = new HashMap<>();
                 map1.put("id",c.getId());
                 map1.put("name",c.getName());
+                map1.put("isDelete",c.getIsDelete());
                 mapsList.add(map1);
             }
             map.put("class",mapsList);

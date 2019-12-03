@@ -24,17 +24,24 @@ public class AdminManagePlates {
     //添加板块或分类
     @RequestMapping(value = "/adm/addPlateOrClass",method = RequestMethod.POST)
     public ServerResponse addPlateOrClass(@RequestBody Map<String,String> jsonObj){
-        Integer id = Integer.valueOf(jsonObj.get("id"));
-        Integer op = Integer.valueOf(jsonObj.get("op"));
+        String op = jsonObj.get("op");
         String name = jsonObj.get("name");
-
+        String errStr = "";
+        if(name==null||name.equals("")){
+            errStr+="name为空 ";
+        }
+        if(op==null||op.equals("")){
+            errStr+="op为空 ";
+        }
+        if(errStr.length()>0){
+            return ServerResponse.createByError(errStr);
+        }
         int result = 0;
-        if(op==1){
+        Integer iOp = Integer.valueOf(op);
+        if(iOp>0){
             result = plateAndClassService.addPlate(name);
-        }else if(op==2){
-            result = plateAndClassService.addClass(id,name);
         }else{
-            return ServerResponse.createByError("操作码错误");
+            result = plateAndClassService.addClass(Math.abs(iOp),name);
         }
         if(result==0){
             return ServerResponse.createByError("数据库异常，操作失败");
@@ -45,13 +52,25 @@ public class AdminManagePlates {
     //删除/恢复板块或分类
     @RequestMapping(value = "/adm/deleteOrRecoverPlate",method = RequestMethod.POST)
     public ServerResponse deleteOrRecoverPlate(@RequestBody Map<String,String> jsonObj){
-        Integer id = Integer.valueOf(jsonObj.get("id"));
-        Integer op = Integer.valueOf(jsonObj.get("op"));
+        String id = jsonObj.get("id");
+        String op = jsonObj.get("op");
+        String errStr = "";
+        if(id==null||id.equals("")){
+            errStr+="id为空 ";
+        }
+        if(op==null||op.equals("")){
+            errStr+="op为空 ";
+        }
+        if(errStr.length()>0){
+            return ServerResponse.createByError(errStr);
+        }
         int result = 0;
-        if(Math.abs(op)==1){
-            result = plateAndClassService.deleteOrRecoverPlate(id,op);
-        }else if(Math.abs(op)==2){
-            result = plateAndClassService.deleteOrRecoverClass(id,op);
+        Integer iOp = Integer.valueOf(op);
+        Integer iId = Integer.valueOf(id);
+        if(Math.abs(iOp)==1){
+            result = plateAndClassService.deleteOrRecoverPlate(iId,iOp);
+        }else if(Math.abs(iOp)==2){
+            result = plateAndClassService.deleteOrRecoverClass(iId,iOp);
         }else{
             return ServerResponse.createByError("操作码错误");
         }

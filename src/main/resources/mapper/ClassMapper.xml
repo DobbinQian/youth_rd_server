@@ -14,7 +14,7 @@
     </select>
 
     <insert id="insert">
-        INSERT INTO class (plate_id,name) VALUES (#{plateId,jdbcType=INTEGER},#{name,jdbcType=VARCHAR})
+        INSERT INTO class (plate_id,name,isDelete) VALUES (#{plateId,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},0)
     </insert>
 
     <update id="updateIsDeleteById" >

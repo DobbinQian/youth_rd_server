@@ -31,6 +31,7 @@ public class InformationServiceImpl implements InformationService {
             Map<String,Object> map = new HashMap<>();
             map.put("id",i.getId());
             map.put("userId",i.getSendId());
+            map.put("userName",i.getSendUser().getName());
             map.put("articleId",i.getContent().substring(0,5));
             map.put("content",i.getContent());
             resultList.add(map);
@@ -50,13 +51,14 @@ public class InformationServiceImpl implements InformationService {
     }
 
     @Override
-    public int replyFeedbackById(Integer userId, Integer admId, String content) {
+    public int replyFeedbackById(Integer infoId,Integer userId, Integer admId, String content) {
         Information information = new Information();
-        information.setSendId(1);
+        information.setSendId(admId);
         information.setReceiveId(userId);
         information.setSendTime(new Date());
         information.setContent(content);
         information.setIsReply(0);
+        informationMapper.updateIsReply(infoId);
         return informationMapper.insert(information);
     }
 }

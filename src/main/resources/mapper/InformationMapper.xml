@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.youth_rd.demo.dao.InformationMapper" >
+    <resultMap id="UserResultMap" type="com.youth_rd.demo.domain.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="INTEGER" />
+        <result column="image" property="image" jdbcType="VARCHAR" />
+        <result column="isBan" property="isBan" jdbcType="INTEGER" />
+        <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
+    </resultMap>
     <resultMap id="BaseResultMap" type="com.youth_rd.demo.domain.Information" >
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="send_id" property="sendId" jdbcType="INTEGER" />
@@ -8,13 +17,44 @@
         <result column="sendTime" property="sendTime" jdbcType="TIMESTAMP" />
         <result column="content" property="content" jdbcType="VARCHAR" />
         <result column="isReply" property="isReply" jdbcType="INTEGER" />
+        <association property="sendUser" javaType="com.youth_rd.demo.domain.User" column="send_id" select="selectUserBySendId">
+            <id column="id" property="id" jdbcType="INTEGER" />
+            <result column="email" property="email" jdbcType="VARCHAR" />
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="sex" property="sex" jdbcType="INTEGER" />
+            <result column="image" property="image" jdbcType="VARCHAR" />
+            <result column="isBan" property="isBan" jdbcType="INTEGER" />
+            <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
+        </association>
+        <association property="replyUser" javaType="com.youth_rd.demo.domain.User" column="receive_id" select="selectUserByReplyId">
+            <id column="id" property="id" jdbcType="INTEGER" />
+            <result column="email" property="email" jdbcType="VARCHAR" />
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="sex" property="sex" jdbcType="INTEGER" />
+            <result column="image" property="image" jdbcType="VARCHAR" />
+            <result column="isBan" property="isBan" jdbcType="INTEGER" />
+            <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
+        </association>
     </resultMap>
+    <select id="selectUserBySendId" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE id = #{send_user_id,jdbcType=INTEGER}
+    </select>
+    <select id="selectUserByReplyId" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE id = #{reply_user_id,jdbcType=INTEGER}
+    </select>
     <select id="selectByAdm" resultMap="BaseResultMap" >
-        SELECT
-        *
+        SELECT *
         FROM information
         WHERE receive_id = 1 AND isReply = 0
     </select>
+    <update id="updateIsReply">
+        UPDATE information SET isReply = 1
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
     <insert id="insert" parameterType="com.youth_rd.demo.domain.Information">
         INSERT INTO information
         <trim prefix="(" suffix=")" suffixOverrides="," >

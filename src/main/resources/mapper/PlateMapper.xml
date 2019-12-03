@@ -21,7 +21,7 @@
     </select>
     <select id="selectAll" resultMap="BaseResultMap">
         SELECT
-        *
+        p.id,p.name,p.isDelete,c.id AS class_id,c.name AS class_name,c.isDelete AS class_isDelete
         FROM plate p
         LEFT JOIN class c ON p.id = c.plate_id
     </select>

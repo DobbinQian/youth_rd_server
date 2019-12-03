@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -80,11 +81,11 @@ public class AdminLogin {
             return ServerResponse.createByError("权限不足");
         }
 
-        if(user==null){
-            return ServerResponse.createByError("用户名或密码错误");
-        }
+        Map<String,String> mapResult = new HashMap<>();
+        mapResult.put("id",user.getId().toString());
+        mapResult.put("name",user.getName());
 
-        return ServerResponse.createByCheckSuccess();
+        return ServerResponse.createBySuccess("登录成功",mapResult);
     }
 
 }
