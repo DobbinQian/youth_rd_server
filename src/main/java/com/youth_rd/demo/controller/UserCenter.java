@@ -129,9 +129,9 @@ public class UserCenter {
         if(id==null){
             return ServerResponse.createByError("id参数为空");
         }
-        User user = RedisTool.getUser(redisTemplate,"user_"+id);
+        User user = userService.getUserById(Integer.valueOf(id));
         if(user==null){
-            return ServerResponse.createByError("用户未登录");
+            return ServerResponse.createByError("用户不存在");
         }
         if(img!=null){
             user.setImage(img);

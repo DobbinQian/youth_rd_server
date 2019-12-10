@@ -130,7 +130,7 @@ public class NewsManageServiceImpl implements NewsManageService {
             Map<String,Object> map = new HashMap<>();
             map.put("id",n.getId());
             map.put("title",n.getTitle());
-            map.put("img",n.getTopImg());
+            map.put("img",n.getImage());
             resultList.add(map);
         }
         return resultList;

@@ -24,7 +24,9 @@ public class AdminFeedback {
     public ServerResponse getFeedbackList(@RequestParam("curr") Integer curr,
                                           @RequestParam("limit") Integer limit){
         List<Map<String,Object>> resultList = informationService.getFeedbackList(curr,limit);
-        return ServerResponse.createBySuccess("获取反馈列表成功",resultList);
+        String number = String.valueOf(resultList.get(0).get("number"));
+        resultList.remove(resultList.get(0));
+        return ServerResponse.createBySuccess(number,resultList);
     }
 
     //回复反馈用户

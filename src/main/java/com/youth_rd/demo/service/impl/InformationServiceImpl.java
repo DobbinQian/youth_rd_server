@@ -27,6 +27,9 @@ public class InformationServiceImpl implements InformationService {
             RedisTool.setList(redisTemplate,key,informationList);
         }
         List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",informationList.size());
+        resultList.add(map1);
         for(Information i:informationList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",i.getId());

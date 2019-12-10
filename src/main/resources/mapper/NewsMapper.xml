@@ -163,8 +163,8 @@
         WHERE n.author_id in (SELECT focused_id FROM follow WHERE focus_id = #{id,jdbcType=INTEGER})
     </select>
     <select id="selectByTop" resultMap="BaseResultMap">
-        SELECT *
-        FROM news
+        SELECT n.id,n.title,n.image
+        FROM news n
         WHERE tag > 1
     </select>
     <select id="selectAll" resultMap="BaseResultMap">
@@ -175,7 +175,7 @@
         LEFT JOIN user u ON u.id = n.author_id
         LEFT JOIN class c ON c.id = n.class_id
         LEFT JOIN plate p ON p.id = c.plate_id
-        WHERE n.tag = 1
+        WHERE n.tag = 1 AND c.isDelete = 0 AND p.isDelete = 0
         ORDER BY n.time
     </select>
     <select id="selectByPlateId" resultMap="BaseResultMap">
@@ -186,7 +186,7 @@
         LEFT JOIN user u ON u.id = n.author_id
         LEFT JOIN class c ON c.id = n.class_id
         LEFT JOIN plate p ON p.id = c.plate_id
-        WHERE n.tag = 1 AND n.class_id in (SELECT id FROM class WHERE plate_id = #{id,jdbcType=INTEGER})
+        WHERE n.tag = 1 AND p.isDelete = 0 AND n.class_id in (SELECT id FROM class WHERE plate_id = #{id,jdbcType=INTEGER})
         ORDER BY n.time
     </select>
     <select id="selectByClassId" resultMap="BaseResultMap">
@@ -197,7 +197,7 @@
         LEFT JOIN user u ON u.id = n.author_id
         LEFT JOIN class c ON c.id = n.class_id
         LEFT JOIN plate p ON p.id = c.plate_id
-        WHERE n.tag = 1 AND n.class_id = #{id,jdbcType=INTEGER}
+        WHERE n.tag = 1 AND n.class_id = #{id,jdbcType=INTEGER} AND  c.isDelete = 0
         ORDER BY n.time
     </select>
     <select id="selectByDayBrowse" resultMap="BaseResultMap">
