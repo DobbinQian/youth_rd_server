@@ -91,5 +91,10 @@ public interface NewsMapper {
 
     //更新投稿
     int updateAllById(News news);
-}
 
+    //模糊搜索内容
+    List<News> selectByTC(@Param("op") Integer op,@Param("value") String value);
+
+    //获取指定用户的投稿列表
+
+}

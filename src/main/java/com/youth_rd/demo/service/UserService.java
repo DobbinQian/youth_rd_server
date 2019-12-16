@@ -45,5 +45,11 @@ public interface UserService {
     //通过邮箱修改用户密码
     int updatePwdByEmail(String email,String pwd);
 
+    //通过ID查看其他用户的信息
+    Map<String,Object> getOtherUserDataById(Integer id);
+
+    //通过ID查看指定用户的投稿
+    List<Map<String,Object>> getActionListById(Integer id,Integer curr,Integer limit);
+
 }
 

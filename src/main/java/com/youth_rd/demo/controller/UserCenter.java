@@ -35,11 +35,7 @@ public class UserCenter {
     public ServerResponse getFollowList(@RequestParam("id") Integer id,
                                         @RequestParam("curr") Integer curr,
                                         @RequestParam("limit") Integer limit){
-        User user = RedisTool.getUser(redisTemplate,"user_"+id);
-        if(user==null){
-            return ServerResponse.createByError("用户未登录");
-        }
-        List<Map<String,Object>> resultList = userService.getFollowList(curr,limit,user.getId());
+        List<Map<String,Object>> resultList = userService.getFollowList(curr,limit,id);
         String number = String.valueOf(resultList.get(0).get("number"));
         resultList.remove(resultList.get(0));
         return ServerResponse.createBySuccess(number,resultList);
@@ -50,11 +46,7 @@ public class UserCenter {
     public ServerResponse getFansList(@RequestParam("id") Integer id,
                                       @RequestParam("curr") Integer curr,
                                       @RequestParam("limit") Integer limit){
-        User user = RedisTool.getUser(redisTemplate,"user_"+id);
-        if(user==null){
-            return ServerResponse.createByError("用户未登录");
-        }
-        List<Map<String,Object>> resultList = userService.getFansList(curr,limit,user.getId());
+        List<Map<String,Object>> resultList = userService.getFansList(curr,limit,id);
         String number = String.valueOf(resultList.get(0).get("number"));
         resultList.remove(resultList.get(0));
         return ServerResponse.createBySuccess(number,resultList);
@@ -147,5 +139,24 @@ public class UserCenter {
             return ServerResponse.createByError("数据库异常，修改失败");
         }
         return ServerResponse.createByCheckSuccess();
+    }
+
+    //用户基本信息（其他用户的）
+    @RequestMapping("/user/getOtherUserDate")
+    public ServerResponse getOtherUserDate(@RequestParam("id") Integer id){
+        Map<String,Object> resultMap = userService.getOtherUserDataById(id);
+        return ServerResponse.createBySuccess("chenggong",resultMap);
+    }
+
+    //获取动态
+    @RequestMapping("/user/getUserAction")
+    public ServerResponse getUserAction(@RequestParam("id") Integer id,
+                                        @RequestParam("curr") Integer curr,
+                                        @RequestParam("limit") Integer limit){
+
+        List<Map<String,Object>> resultList = userService.getActionListById(id,curr,limit);
+        String number = String.valueOf(resultList.get(0).get("number"));
+        resultList.remove(resultList.get(0));
+        return ServerResponse.createBySuccess(number,resultList);
     }
 }

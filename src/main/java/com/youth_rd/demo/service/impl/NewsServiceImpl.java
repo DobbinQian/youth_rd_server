@@ -46,11 +46,23 @@ public class NewsServiceImpl implements NewsService {
             RedisTool.setList(redisTemplate,key,newsList);
         }
         newsList = PageTool.getDateByCL(newsList,curr,limit);
+        if(newsList==null){
+            return null;
+        }
         List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",newsList.size());
+        resultList.add(map1);
         for(News n:newsList){
             Map<String,Object> map = new HashMap<>();
             map.put("id",n.getId());
             map.put("title",n.getTitle());
+            map.put("classId",n.getClassId());
+            map.put("plateId",n.getPlate().getId());
+            map.put("browse",n.getBrowse());
+            map.put("comments",n.getComments());
+            map.put("content",n.getContent());
+            map.put("authorImg",n.getAuthor().getImage());
             map.put("img",n.getImage());
             map.put("authorId",n.getAuthorId());
             map.put("authorName",n.getAuthor().getName());
@@ -310,5 +322,34 @@ public class NewsServiceImpl implements NewsService {
             resultMap.put("content",news.getContent());
             return resultMap;
         }
+    }
+
+    @Override
+    public List<Map<String, Object>> getNewsByTC(Integer op, String value,Integer curr,Integer limit) {
+        List<News> newsList = newsMapper.selectByTC(op,value);
+        newsList = PageTool.getDateByCL(newsList,curr,limit);
+        List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",newsList.size());
+        resultList.add(map1);
+        if(newsList == null){
+            return resultList;
+        }
+        for(News n:newsList){
+            Map<String,Object> map = new HashMap<>();
+            map.put("title",n.getTitle());
+            map.put("img",n.getImage());
+            map.put("date",formatter.format(n.getTime()));
+            map.put("id",n.getId());
+            map.put("authorId",n.getAuthorId());
+            map.put("authorName",n.getAuthor().getName());
+            map.put("browse",n.getBrowse());
+            map.put("comments",n.getComments());
+            map.put("content",n.getContent());
+            map.put("classId",n.getaClass().getId());
+            map.put("plateId",n.getPlate().getId());
+            resultList.add(map);
+        }
+        return resultList;
     }
 }

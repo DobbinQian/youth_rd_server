@@ -29,6 +29,12 @@
         LEFT JOIN follow f on u.id = f.focused_id
         WHERE f.focus_id = #{userId,jdbcType=INTEGER} AND f.focused_id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectFollowNumber" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM follow WHERE focus_id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectFansNumber" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM follow WHERE focused_id = #{id,jdbcType=INTEGER}
+    </select>
     <insert id="insert">
         INSERT INTO follow (focus_id,focused_id)
         VALUES (#{followId,jdbcType=INTEGER},#{followedId,jdbcType=INTEGER})

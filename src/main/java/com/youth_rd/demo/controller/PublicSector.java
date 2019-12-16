@@ -55,7 +55,20 @@ public class PublicSector {
                                         @RequestParam("limit")Integer limit){
         System.out.println("/user/getActionList");
         List<Map<String,Object>> resultList = newsService.getNewsByUserFollow(id,curr,limit);
-        return ServerResponse.createBySuccess("获取动态成功",resultList);
+        if(resultList==null){
+            return ServerResponse.createByError("没数据了");
+        }
+        String number = String.valueOf(resultList.get(0).get("number"));
+        resultList.remove(resultList.get(0));
+        return ServerResponse.createBySuccess(number,resultList);
+    }
+
+    //获取动态列表
+    @RequestMapping("/user/getActionPage")
+    public ServerResponse getActionPage(@RequestParam("id") Integer id,
+                                        @RequestParam("curr") Integer curr,
+                                        @RequestParam("limit") Integer limit){
+        return null;
     }
 
     //获取热门搜索

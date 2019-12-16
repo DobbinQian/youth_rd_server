@@ -21,7 +21,7 @@
             <result column="email" property="email" jdbcType="VARCHAR" />
             <result column="name" property="name" jdbcType="VARCHAR" />
             <result column="sex" property="sex" jdbcType="INTEGER" />
-            <result column="image" property="image" jdbcType="VARCHAR" />
+            <result column="user_image" property="image" jdbcType="VARCHAR" />
             <result column="isBan" property="isBan" jdbcType="INTEGER" />
             <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
         </association>
@@ -104,6 +104,25 @@
             </if>
         </trim>
     </insert>
+    <select id="selectByTC" resultMap="BaseResultMap">
+        SELECT n.*,u.name,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
+        (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
+        (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
+        FROM news n
+        LEFT JOIN user u ON u.id = n.author_id
+        LEFT JOIN class c ON c.id = n.class_id
+        LEFT JOIN plate p ON p.id = c.plate_id
+        WHERE n.tag > 0 AND (n.title LIKE '%${value}%' OR n.content LIKE '%${value}%')
+        <if test="op == 1">
+            ORDER BY n.time
+        </if>
+        <if test="op == 2">
+            ORDER BY browse
+        </if>
+        <if test="op == 3">
+            ORDER BY comments
+        </if>
+    </select>
     <select id="selectById" resultMap="BaseResultMap">
         SELECT n.*,u.name,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
         (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
@@ -141,9 +160,13 @@
         <if test="username!=null"><if test="id!=null or plateId!=null or classId!=null or tag!=null or title!=null">AND </if>u.name LIKE '%${username}%'</if>
     </select>
     <select id="selectPassByUserId" resultMap="BaseResultMap">
-        SELECT n.*,(SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
+        SELECT n.*,u.name,u.image AS user_image,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
+        (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
         (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
         FROM news n
+        LEFT JOIN user u ON u.id = n.author_id
+        LEFT JOIN class c ON c.id = n.class_id
+        LEFT JOIN plate p ON p.id = c.plate_id
         WHERE n.author_id = #{id,jdbcType=INTEGER} AND n.tag > 0
     </select>
     <select id="selectAuditByUserId" resultMap="BaseResultMap">
@@ -157,10 +180,15 @@
         WHERE author_id = #{id,jdbcType=INTEGER} AND tag = -1
     </select>
     <select id="selectByFansId" resultMap="BaseResultMap">
-        SELECT n.id,n.author_id,n.title,n.image,n.time,u.name
+        SELECT n.id,n.author_id,n.title,n.image,n.time,u.id,u.name,u.image AS user_image,n.content,c.id AS class_id,c.name AS class_name,p.id AS plate_id,p.name AS plate_name,
+        (SELECT COUNT(id) FROM history h WHERE h.news_id = n.id) AS browse,
+        (SELECT COUNT(id) FROM comment co WHERE co.news_id = n.id) AS comments
         FROM news n
         LEFT JOIN user u ON u.id = n.author_id
+        LEFT JOIN class c ON c.id = n.class_id
+        LEFT JOIN plate p ON p.id = c.plate_id
         WHERE n.author_id in (SELECT focused_id FROM follow WHERE focus_id = #{id,jdbcType=INTEGER})
+        ORDER BY n.time DESC
     </select>
     <select id="selectByTop" resultMap="BaseResultMap">
         SELECT n.id,n.title,n.image

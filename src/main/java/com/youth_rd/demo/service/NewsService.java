@@ -34,4 +34,7 @@ public interface NewsService {
     //通过ID获取已退回的文章详情
     Map<String,Object> getReturnContentById(Integer userId,Integer newsId);
 
+    //通过模糊查询获取新闻列表
+    List<Map<String,Object>> getNewsByTC(Integer op,String value,Integer curr,Integer limit);
+
 }

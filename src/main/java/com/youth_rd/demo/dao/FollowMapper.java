@@ -20,4 +20,8 @@ public interface FollowMapper {
     int delete(@Param("followId") Integer followId,@Param("followedId") Integer followedId);
     //查看是否有关注信息
     User selectByFollowsId(@Param("id") Integer id,@Param("userId") Integer userId);
+    //获取关注数量
+    int selectFollowNumber(Integer id);
+    //获取粉丝数量
+    int selectFansNumber(Integer id);
 }

@@ -1,6 +1,7 @@
 package com.youth_rd.demo.controller;
 
 import com.google.code.kaptcha.Producer;
+import com.youth_rd.demo.dao.FollowMapper;
 import com.youth_rd.demo.domain.User;
 import com.youth_rd.demo.service.EmailService;
 import com.youth_rd.demo.service.UserService;
@@ -34,6 +35,9 @@ public class LoginAndRegistration {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private FollowMapper followMapper;
 
     //获取登录验证码
 //    @RequestMapping("/getValidCode")
@@ -78,12 +82,17 @@ public class LoginAndRegistration {
 
         RedisTool.setUser(redisTemplate,"user_"+user.getId().toString(),user);
 
-        Map<String,String> mapResult = new HashMap<>();
-        mapResult.put("id",user.getId().toString());
+        int fn = followMapper.selectFollowNumber(user.getId());
+        int sn = followMapper.selectFansNumber(user.getId());
+
+        Map<String,Object> mapResult = new HashMap<>();
+        mapResult.put("id",user.getId());
         mapResult.put("img",user.getImage());
         mapResult.put("name",user.getName());
         mapResult.put("sex",user.getSex().toString());
         mapResult.put("email",user.getEmail());
+        mapResult.put("followNumber",fn);
+        mapResult.put("fansNumber",sn);
 
         return ServerResponse.createBySuccess("登录成功",mapResult);
     }

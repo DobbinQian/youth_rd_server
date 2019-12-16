@@ -2,8 +2,10 @@ package com.youth_rd.demo.service.impl;
 
 import com.youth_rd.demo.dao.FollowMapper;
 import com.youth_rd.demo.dao.HistoryMapper;
+import com.youth_rd.demo.dao.NewsMapper;
 import com.youth_rd.demo.dao.UserMapper;
 import com.youth_rd.demo.domain.History;
+import com.youth_rd.demo.domain.News;
 import com.youth_rd.demo.domain.User;
 import com.youth_rd.demo.service.UserService;
 import com.youth_rd.demo.tools.PageTool;
@@ -29,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private NewsMapper newsMapper;
 
     @Override
     public Map<String,Object> getUserData(Integer id){
@@ -196,6 +201,53 @@ public class UserServiceImpl implements UserService {
         user.setPassword(pwd);
         int result = userMapper.updateByUser(user);
         return result;
+    }
+
+    @Override
+    public Map<String, Object> getOtherUserDataById(Integer id) {
+        Map<String,Object> resultMap = new HashMap<>();
+        User user = userMapper.selectById(id);
+        resultMap.put("userId",user.getId());
+        resultMap.put("userImage",user.getImage());
+        resultMap.put("userName",user.getName());
+        resultMap.put("followNumber",String.valueOf(followMapper.selectFollowNumber(user.getId())));
+        resultMap.put("fansNumber",String.valueOf(followMapper.selectFansNumber(user.getId())));
+        return resultMap;
+    }
+
+    @Override
+    public List<Map<String, Object>> getActionListById(Integer id, Integer curr, Integer limit) {
+        String key = "CLI"+id;
+        List<News> newsList;
+        if(RedisTool.hasKey(redisTemplate,key)){
+            newsList = RedisTool.getList(redisTemplate,key);
+        }else{
+            newsList = newsMapper.selectPassByUserId(id);
+            RedisTool.setList(redisTemplate,key,newsList);
+        }
+        List<Map<String,Object>> resultList = new ArrayList<>();
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("number",newsList.size());
+        resultList.add(map1);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        newsList = PageTool.getDateByCL(newsList,curr,limit);
+        for(News n:newsList){
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",n.getId());
+            map.put("title",n.getTitle());
+            map.put("img",n.getImage());
+            map.put("content",n.getContent());
+            map.put("plateId",n.getPlate().getId());
+            map.put("classId",n.getClassId());
+            map.put("authorId",n.getAuthorId());
+            map.put("authorName",n.getAuthor().getName());
+            map.put("authorImg",n.getAuthor().getImage());
+            map.put("browse",n.getBrowse());
+            map.put("comments",n.getComments());
+            map.put("date",formatter.format(n.getTime()));
+            resultList.add(map);
+        }
+        return resultList;
     }
 
 }
