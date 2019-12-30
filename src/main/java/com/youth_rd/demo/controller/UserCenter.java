@@ -143,8 +143,9 @@ public class UserCenter {
 
     //用户基本信息（其他用户的）
     @RequestMapping("/user/getOtherUserDate")
-    public ServerResponse getOtherUserDate(@RequestParam("id") Integer id){
-        Map<String,Object> resultMap = userService.getOtherUserDataById(id);
+    public ServerResponse getOtherUserDate(@RequestParam("opId") Integer opId,
+                                           @RequestParam("id") Integer id){
+        Map<String,Object> resultMap = userService.getOtherUserDataById(opId,id);
         return ServerResponse.createBySuccess("chenggong",resultMap);
     }
 

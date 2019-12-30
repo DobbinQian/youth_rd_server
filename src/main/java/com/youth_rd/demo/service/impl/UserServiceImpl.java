@@ -204,14 +204,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, Object> getOtherUserDataById(Integer id) {
+    public Map<String, Object> getOtherUserDataById(Integer opId,Integer id) {
         Map<String,Object> resultMap = new HashMap<>();
-        User user = userMapper.selectById(id);
+        User user = userMapper.selectByOpId(opId,id);
         resultMap.put("userId",user.getId());
         resultMap.put("userImage",user.getImage());
         resultMap.put("userName",user.getName());
         resultMap.put("followNumber",String.valueOf(followMapper.selectFollowNumber(user.getId())));
         resultMap.put("fansNumber",String.valueOf(followMapper.selectFansNumber(user.getId())));
+        resultMap.put("isFollow",user.getIsMutual());
         return resultMap;
     }
 

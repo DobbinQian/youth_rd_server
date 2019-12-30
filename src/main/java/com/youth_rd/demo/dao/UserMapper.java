@@ -17,6 +17,9 @@ public interface UserMapper {
     //通过Id获得User信息
     User selectById(Integer id);
 
+    //通过操作用户Id 和 userId获取
+    User selectByOpId(@Param("opId") Integer opId,@Param("id") Integer id);
+
     //通过Email和Password获得User信息
     User selectByEmailAndPwd(@Param("email") String email,@Param("pwd") String pwd);
 

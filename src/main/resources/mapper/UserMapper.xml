@@ -10,6 +10,7 @@
         <result column="image" property="image" jdbcType="VARCHAR" />
         <result column="isBan" property="isBan" jdbcType="INTEGER" />
         <result column="registerDate" property="registerDate" jdbcType="TIMESTAMP" />
+        <result column="isMutual" property="isMutual" jdbcType="INTEGER"/>
     </resultMap>
     <insert id="insert" parameterType="com.youth_rd.demo.domain.User">
         INSERT INTO user
@@ -63,6 +64,12 @@
     <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select *
         from user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByOpId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select u.*,(SELECT COUNT(f1.id) FROM follow f1 WHERE u.id = f1.focused_id AND #{opId,jdbcType=INTEGER} = f1.focus_id) AS isMutual
+        from user u
         where id = #{id,jdbcType=INTEGER}
     </select>
 

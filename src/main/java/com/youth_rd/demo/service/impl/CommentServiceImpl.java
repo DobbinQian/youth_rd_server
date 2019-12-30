@@ -17,6 +17,8 @@ public class CommentServiceImpl implements CommentService {
     RedisTemplate redisTemplate;
     @Autowired
     CommentMapper commentMapper;
+
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Override
     public List<Map<String, Object>> getCommentByNewsId(Integer id) {
         String key = "commentsList_"+id;
@@ -113,7 +115,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setContent(content);
         resultMap.put("content",comment.getContent());
         comment.setTime(new Date());
-        resultMap.put("time",comment.getTime());
+        resultMap.put("time",formatter.format(comment.getTime()));
         if(commentMapper.insert(comment)==0){
             return null;
         }
@@ -133,7 +135,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setReplyId(commentId);
         resultMap.put("cid",comment.getReplyId());
         comment.setTime(new Date());
-        resultMap.put("time",comment.getTime());
+        resultMap.put("time",formatter.format(comment.getTime()));
         if(commentMapper.insert(comment)==0){
             return null;
         }
